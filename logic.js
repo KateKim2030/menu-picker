@@ -2,12 +2,11 @@
 (function (root) {
   "use strict";
   const KEY = "menu-app-v1";
-  const MAX_CANDS = 3;
 
   // ---------- data check ----------
   function validate(data, artCheck) {
     const errs = [], seen = {};
-    const tagIds = data.INGREDIENTS.map((x) => x.id), kindIds = data.KINDS.map((x) => x.id);
+    const tagIds = data.INGREDIENTS.map((x) => x.id), kindIds = data.KINDS.map((x) => x.id), mealIds = data.MEALS.map((x) => x.id);
     const dup = (list, what) => list.forEach((x, i) => { if (list.indexOf(x) !== i) errs.push(what + " 겹침: " + x); });
     dup(tagIds, "주재료 id"); dup(kindIds, "종류 id"); dup(data.PANTRY.map((p) => p.id), "우리 집 재료 id");
     dup([].concat.apply([], data.PANTRY.map((p) => p.names)), "우리 집 재료 이름");
@@ -20,6 +19,8 @@
       if (!Array.isArray(r.tags) || !r.tags.length) bad("tags 없음");
       else r.tags.forEach((t) => { if (tagIds.indexOf(t) < 0) bad("모르는 주재료 " + t); });
       if (kindIds.indexOf(r.kind) < 0) bad("모르는 종류 " + r.kind);
+      if (!Array.isArray(r.meals) || !r.meals.length) bad("meals 없음 (홈 화면 어느 칸에도 안 나옴)");
+      else r.meals.forEach((m) => { if (mealIds.indexOf(m) < 0) bad("모르는 칸 " + m); });
       if (!(r.time >= 1 && r.time <= 30)) bad("조리 시간은 1~30분");
       if (!(r.kcal > 0)) bad("칼로리 없음");
       if (!(r.protein > 0)) bad("단백질 없음");
@@ -34,33 +35,19 @@
   }
 
   // ---------- browsing ----------
-  // Both filters must match. Dishes whose main ingredient is the chosen one come first.
-  function filter(recipes, tag, kind) {
-    const out = recipes.filter((r) => (!tag || tag === "all" || r.tags.indexOf(tag) >= 0) && (!kind || kind === "all" || r.kind === kind));
+  // Dishes of one home-screen box, optionally narrowed to a main ingredient (dishes led by that ingredient come first).
+  function list(recipes, meal, tag) {
+    const hit = recipes.filter((r) => r.meals.indexOf(meal) >= 0 && (!tag || tag === "all" || r.tags.indexOf(tag) >= 0));
+    const out = hit.filter((r) => r.meals[0] === meal).concat(hit.filter((r) => r.meals[0] !== meal)); // dishes made for this box first
     if (!tag || tag === "all") return out;
     return out.filter((r) => r.tags[0] === tag).concat(out.filter((r) => r.tags[0] !== tag));
   }
+  // Main ingredients that actually occur in a list, in the order of INGREDIENTS — the filter chips worth showing.
+  const tagsIn = (recipes, ingredients) => ingredients.filter((t) => recipes.some((r) => r.tags.indexOf(t.id) >= 0));
   function pinFavs(recipes, favs) {
     return { favs: favs.map((id) => recipes.find((r) => r.id === id)).filter(Boolean), rest: recipes.filter((r) => favs.indexOf(r.id) < 0) };
   }
   const toggle = (list, id) => (list.indexOf(id) >= 0 ? list.filter((x) => x !== id) : [id].concat(list));
-
-  // ---------- today's suggestions ----------
-  // n dishes that differ from each other: first by kind and main ingredient, then by kind only, then anything.
-  function suggest(recipes, n, rand, avoid) {
-    avoid = avoid || [];
-    let pool = recipes.filter((r) => avoid.indexOf(r.id) < 0);
-    if (pool.length < n) pool = recipes.slice();
-    pool = pool.map((r) => [rand(), r]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
-    const out = [];
-    const rules = [
-      (r) => out.every((o) => o.kind !== r.kind && o.tags[0] !== r.tags[0]),
-      (r) => out.every((o) => o.kind !== r.kind),
-      () => true,
-    ];
-    rules.forEach((ok) => pool.forEach((r) => { if (out.length < n && out.indexOf(r) < 0 && ok(r)) out.push(r); }));
-    return out;
-  }
 
   // ---------- what's at home ----------
   function itemOf(name, pantry) {
@@ -87,34 +74,23 @@
       .slice(0, max || 4);
   }
 
-  // ---------- candidates ----------
-  function addCand(cands, id) {
-    if (cands.indexOf(id) >= 0) return { cands: cands, ok: true };
-    if (cands.length >= MAX_CANDS) return { cands: cands, ok: false };
-    return { cands: cands.concat([id]), ok: true };
-  }
-  // "Pick for me": fewest things to buy, then quickest.
-  function pick(recipes, have, pantry) {
-    return recipes.slice().sort((a, b) => split(a, have, pantry).need.length - split(b, have, pantry).need.length || a.time - b.time)[0] || null;
-  }
-
   // ---------- saved state ----------
-  const fresh = () => ({ favs: [], have: [], cands: [] });
+  const fresh = () => ({ favs: [], have: [] });
   function clean(raw, data) {
     const s = fresh(), ids = data.RECIPES.map((r) => r.id), items = data.PANTRY.map((p) => p.id);
-    const list = (v, ok) => (Array.isArray(v) ? v.filter((x, i) => ok.indexOf(x) >= 0 && v.indexOf(x) === i) : []);
+    const uniq = (v, ok) => (Array.isArray(v) ? v.filter((x, i) => ok.indexOf(x) >= 0 && v.indexOf(x) === i) : []);
     if (raw && typeof raw === "object") {
-      s.favs = list(raw.favs, ids); s.have = list(raw.have, items); s.cands = list(raw.cands, ids).slice(0, MAX_CANDS);
+      s.favs = uniq(raw.favs, ids); s.have = uniq(raw.have, items);
     }
     return s;
   }
   function load(storage, data) { try { return clean(JSON.parse(storage.getItem(KEY)), data); } catch (e) { return fresh(); } }
   function save(storage, s) { try { storage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
 
-  const meal = (hour) => (hour < 10 ? "아침" : hour < 15 ? "점심" : "저녁");
+  const mealNow = (hour) => (hour < 10 ? "breakfast" : hour < 15 ? "lunch" : "dinner");
 
-  const API = { KEY: KEY, MAX_CANDS: MAX_CANDS, validate: validate, filter: filter, pinFavs: pinFavs, toggle: toggle, suggest: suggest,
-    itemOf: itemOf, split: split, cookable: cookable, addCand: addCand, pick: pick, fresh: fresh, clean: clean, load: load, save: save, meal: meal };
+  const API = { KEY: KEY, validate: validate, list: list, tagsIn: tagsIn, pinFavs: pinFavs, toggle: toggle,
+    itemOf: itemOf, split: split, cookable: cookable, fresh: fresh, clean: clean, load: load, save: save, mealNow: mealNow };
   if (typeof module !== "undefined" && module.exports) module.exports = API;
   else root.MENU = API;
 })(typeof self !== "undefined" ? self : this);

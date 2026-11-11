@@ -38,6 +38,11 @@
     zucchini: () => '<path d="M-9 4a9 9 0 0 1 18 0z" fill="#e6f0c6"' + ST + "/>" + line("M-5 1a5 5 0 0 1 10 0", K.greenD, 2),
     cucumber: () => '<circle r="6.5" fill="#e6f0c6"' + ST + "/>" + '<circle r="3" fill="none" stroke="' + K.greenD + '" stroke-width="1.8"/>',
     seaweed: () => line("M-5 0h10", K.ink, 3.5),
+    shrimp: () => tube("M-7 5a8 8 0 1 1 9-9", K.coral, 5),
+    garlic: () => '<ellipse rx="6" ry="4.5" fill="#fbf1d4"' + ST + "/>",
+    sausage: () => '<rect x="-10" y="-4.5" width="20" height="9" rx="4.5" fill="#d9775f"' + ST + "/>" + line("M-3-3l-2 6M3-3l-2 6", "#a8553f", 1.6),
+    pepper: (i) => tube("M-8 3q8-9 16 0", i % 2 ? K.gold : "#e0694a", 5),
+    fishcake: () => tube("M-11 0q4-7 7 0t7 0t7 0", "#e9c48e", 6),
   };
 
   const egg = (yolkX, yolkY) => '<path d="M-20 0q-2-15 12-15q8-6 16 2q12 4 8 16q-2 12-16 11q-18 4-20-14z" fill="' + K.paper + '"' + ST + "/>" +
@@ -66,6 +71,8 @@
       '<circle r="12" fill="' + K.toast + '"' + ST + "/>" + flecks([[-4, -3], [3, -5], [4, 4], [-3, 5]]))).join(""),
     wrap: () => [[-20, -12, -20], [-14, 12, 15], [2, -4, 40]].map((p) => g(p[0], p[1], p[2], T.greens(), 2)).join("") +
       '<circle cx="27" cy="13" r="13" fill="' + K.sky + '"' + ST + '/><circle cx="27" cy="13" r="8" fill="#c98d5a" stroke="' + K.ink + '" stroke-width="2"/>',
+    chop: () => '<path d="M-34 2q-2-22 22-24q30-2 32 20q2 22-28 22q-24 0-26-18z" fill="#dba48c"' + ST + "/>" +
+      line("M-22-10l14 22M-8-16l16 26M8-17l14 22", "#a8674f", 3) + '<path d="M18-14q10 4 10 14" fill="none" stroke="' + K.paper + '" stroke-width="4" stroke-linecap="round"/>',
     steak: () => '<path d="M-36 16Q-34-26 2-26Q36-24 36 16Z" fill="' + K.green + '"' + ST + "/>" +
       line("M-24 14Q-22-14 2-15Q24-14 25 14", K.greenD, 2.5) + line("M-12 14Q-10-4 2-5Q12-4 13 14", K.greenD, 2.5) +
       line("M-28-4l8-8", "#b08a4a", 3) + line("M20-12l8 8", "#b08a4a", 3) + g(4, 8, 0, egg(1, 0), 0.72),
@@ -118,22 +125,28 @@
   const svg = (w, h, inner, cls) => '<svg class="' + (cls || "art") + '" viewBox="0 0 ' + w + " " + h + '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + inner + "</svg>";
   const dish = (spec) => svg(160, 120, check(spec).length ? DISH.plate({}) : DISH[spec.dish](spec));
 
-  // round buttons for the main-ingredient filter (64 x 64)
+  // icons for the five boxes on the home screen (64 x 64)
+  const sun = (cx, cy, r) => [0, 45, 90, 135, 180, 225, 270, 315].map((a) => { const t = a * Math.PI / 180, c = Math.cos(t), s = Math.sin(t);
+    return line("M" + (cx + c * (r + 5)).toFixed(1) + " " + (cy + s * (r + 5)).toFixed(1) + "L" + (cx + c * (r + 11)).toFixed(1) + " " + (cy + s * (r + 11)).toFixed(1), K.ink, 3); }).join("") +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + K.gold + '" stroke="' + K.ink + '" stroke-width="3"/>';
   const ICON = {
-    cabbage: '<circle cx="32" cy="34" r="23" fill="' + K.green + '" stroke="' + K.ink + '" stroke-width="3"/><ellipse cx="32" cy="38" rx="11" ry="14" fill="' + K.greenL + '"/>' +
-      line("M32 13q-17 9-11 30", K.greenD, 2.5) + line("M32 13q17 9 11 30", K.greenD, 2.5) + line("M32 24v26", K.greenD, 2.5),
-    tofu: '<g stroke="' + K.ink + '" stroke-width="3" stroke-linejoin="round"><path d="M10 28L21 15H56L50 28Z" fill="#fff"/><path d="M50 28L56 15V40L50 53Z" fill="#e8dac4"/><rect x="10" y="28" width="40" height="25" rx="2" fill="' + K.paper + '"/></g>',
-    egg: g(32, 34, 0, egg(1, 0), 1.25),
-    mushroom: '<rect x="24" y="32" width="16" height="22" rx="7" fill="' + K.paper + '" stroke="' + K.ink + '" stroke-width="3"/><path d="M8 36a24 22 0 0 1 48 0z" fill="#cdb48f" stroke="' + K.ink + '" stroke-width="3" stroke-linejoin="round"/>' +
-      dot(22, 26, 3, "#e8d6bb") + dot(36, 21, 3.5, "#e8d6bb") + dot(45, 29, 2.5, "#e8d6bb"),
-    meat: '<path d="M9 33q0-19 21-19q26 0 26 21q0 17-24 17q-23 0-23-19z" fill="#e79c88" stroke="' + K.ink + '" stroke-width="3" stroke-linejoin="round"/>' +
-      line("M19 30q8-9 18-5", K.paper, 3) + line("M22 41q9 4 18-1", K.paper, 3) + '<circle cx="44" cy="31" r="5" fill="' + K.paper + '" stroke="' + K.ink + '" stroke-width="2.5"/>',
-    all: '<circle cx="32" cy="34" r="23" fill="' + K.paper + '" stroke="' + K.ink + '" stroke-width="3"/><circle cx="32" cy="34" r="15" fill="none" stroke="' + K.line + '" stroke-width="2"/>' +
-      g(26, 30, -18, T.cabbage(0)) + g(38, 32, 22, T.scramble()) + g(30, 42, 8, T.tofu(), 0.8),
+    breakfast: '<clipPath id="icb"><rect x="0" y="0" width="64" height="44"/></clipPath><g clip-path="url(#icb)">' + sun(32, 44, 14) + "</g>" +
+      line("M6 45h52", K.ink, 3) + line("M18 54h28", K.ink, 3),
+    lunch: sun(32, 32, 13),
+    dinner: '<path d="M44 40a19 19 0 1 1-19-27a15 15 0 0 0 19 27z" fill="' + K.sky + '" stroke="' + K.ink + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M46 12l2 5l5 2l-5 2l-2 5l-2-5l-5-2l5-2z" fill="' + K.gold + '" stroke="' + K.ink + '" stroke-width="2" stroke-linejoin="round"/>',
+    healthy: '<path d="M32 56Q8 44 12 16Q36 12 44 30Q50 44 32 56Z" fill="' + K.green + '" stroke="' + K.ink + '" stroke-width="3" stroke-linejoin="round"/>' +
+      line("M17 21Q30 32 32 54", K.greenD, 2.5) + line("M24 30l8-3M27 40l9-4", K.greenD, 2.5) +
+      '<path d="M40 22Q48 8 58 12Q58 24 46 28Z" fill="' + K.greenL + '" stroke="' + K.ink + '" stroke-width="3" stroke-linejoin="round"/>',
+    camping: '<path d="M6 50L30 12L54 50Z" fill="' + K.coral + '" stroke="' + K.ink + '" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M30 50L30 30L42 50Z" fill="' + K.ink + '"/>' + line("M30 12l-4-6M30 12l4-6", K.ink, 3) + line("M2 50h60", K.ink, 3) +
+      '<path d="M52 50q-4-7 1-12q5 5 1 12z" fill="' + K.gold + '" stroke="' + K.ink + '" stroke-width="2" stroke-linejoin="round"/>',
+    fav: '<path d="M32 54s-20-12-25-25C3 19 8 10 18 10c6 0 10 3 14 8c4-5 8-8 14-8c10 0 15 9 11 19c-5 13-25 25-25 25z" fill="' + K.coral + '" stroke="' + K.ink + '" stroke-width="3" stroke-linejoin="round"/>',
   };
-  const icon = (id) => svg(64, 64, ICON[id] || ICON.all, "ico");
+  const icon = (id) => svg(64, 64, ICON[id] || ICON.healthy, "ico");
+  const icons = Object.keys(ICON);
 
-  const API = { dish: dish, icon: icon, check: check, pieces: Object.keys(T), bigs: Object.keys(BIG) };
+  const API = { dish: dish, icon: icon, icons: icons, check: check, pieces: Object.keys(T), bigs: Object.keys(BIG) };
   if (typeof module !== "undefined" && module.exports) module.exports = API;
   else root.ART = API;
 })(typeof self !== "undefined" ? self : this);

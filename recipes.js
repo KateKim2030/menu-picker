@@ -6,6 +6,8 @@
 //   name        : 요리 이름
 //   tags        : 들어가는 주재료. 첫 번째가 대표 재료. (INGREDIENTS 의 id 중에서)
 //   kind        : 종류. (KINDS 의 id 중에서: steam 찜 / soup 국물 / stirfry 볶음 / bowl 한 그릇 / fresh 샐러드·무침 / pan 구이·전)
+//   meals       : 홈 화면의 어느 칸에 나올지. 여러 개 가능. 첫 번째로 적은 칸에서는 목록 위쪽에 나온다.
+//                 (MEALS 의 id 중에서: breakfast 아침 / lunch 점심 / dinner 저녁 / healthy 건강식 / camping 캠핑요리)
 //   delivery    : 배달앱에서 찾을 때 쓸 검색어 (배달로 먹기 어려운 메뉴는 빼면 됨)
 //   time        : 조리 시간(분)
 //   kcal/protein: 1인분 대략 값. 재료 양으로 어림한 추정치(공식 수치 아님)
@@ -28,6 +30,16 @@
     { id: "egg", name: "계란" },
     { id: "mushroom", name: "버섯" },
     { id: "meat", name: "고기" },
+    { id: "seafood", name: "해물" },
+  ];
+
+  // 홈 화면의 다섯 칸
+  const MEALS = [
+    { id: "breakfast", name: "아침", desc: "가볍고 빨리 되는 메뉴" },
+    { id: "lunch", name: "점심", desc: "한 그릇으로 든든한 메뉴" },
+    { id: "dinner", name: "저녁", desc: "국물·찜·구이로 차리는 메뉴" },
+    { id: "healthy", name: "건강식", desc: "채소·두부·계란 중심의 가벼운 메뉴" },
+    { id: "camping", name: "캠핑요리", desc: "팬이나 냄비 하나로 되는 메뉴" },
   ];
 
   const KINDS = [
@@ -53,12 +65,19 @@
     { id: "cucumber", name: "오이", group: "채소", names: ["오이"] },
     { id: "tomato", name: "토마토", group: "채소", names: ["토마토", "방울토마토"] },
     { id: "greens", name: "샐러드 채소", group: "채소", names: ["샐러드 채소"] },
+    { id: "perilla", name: "깻잎", group: "채소", names: ["깻잎"] },
+    { id: "paprika", name: "파프리카", group: "채소", names: ["파프리카"] },
+    { id: "garlic", name: "통마늘", group: "채소", names: ["통마늘"] },
     { id: "egg", name: "계란", group: "단백질", names: ["계란"] },
     { id: "tofu", name: "두부", group: "단백질", names: ["두부"] },
     { id: "softtofu", name: "순두부", group: "단백질", names: ["순두부"] },
     { id: "chicken", name: "닭가슴살", group: "단백질", names: ["닭가슴살", "익힌 닭가슴살"] },
     { id: "beef", name: "얇게 썬 소고기", group: "단백질", names: ["샤브샤브용 소고기", "얇게 썬 소고기"] },
     { id: "pork", name: "얇게 썬 돼지고기", group: "단백질", names: ["얇게 썬 돼지고기"] },
+    { id: "porkneck", name: "돼지 목살", group: "단백질", names: ["돼지 목살"] },
+    { id: "sausage", name: "소시지", group: "단백질", names: ["비엔나 소시지"] },
+    { id: "shrimp", name: "새우", group: "단백질", names: ["새우"] },
+    { id: "fishcake", name: "어묵", group: "단백질", names: ["어묵"] },
     { id: "tuna", name: "참치캔", group: "단백질", names: ["참치캔"] },
     { id: "rice", name: "밥", group: "밥·빵·기타", names: ["밥"] },
     { id: "bread", name: "식빵", group: "밥·빵·기타", names: ["식빵"] },
@@ -71,7 +90,7 @@
   const RECIPES = [
     // ───────── 양배추 ─────────
     {
-      id: "cabbage-egg-stirfry", name: "양배추 계란 볶음", tags: ["cabbage", "egg"], kind: "stirfry", time: 10, kcal: 230, protein: 14,
+      id: "cabbage-egg-stirfry", name: "양배추 계란 볶음", tags: ["cabbage", "egg"], kind: "stirfry", meals: ["breakfast", "lunch", "healthy"], time: 10, kcal: 230, protein: 14,
       ingredients: [
         { name: "양배추", amount: "150g (두 줌)" }, { name: "계란", amount: "2개" }, { name: "식용유", amount: "1작은술" },
         { name: "간장", amount: "1작은술" }, { name: "소금", amount: "한 꼬집" }, { name: "후추", amount: "조금" },
@@ -86,7 +105,7 @@
       art: { dish: "pan", on: ["cabbage", "scramble"] },
     },
     {
-      id: "cabbage-tuna-rice", name: "양배추 참치 덮밥", tags: ["cabbage"], kind: "bowl", time: 15, kcal: 370, protein: 23,
+      id: "cabbage-tuna-rice", name: "양배추 참치 덮밥", tags: ["cabbage"], kind: "bowl", meals: ["lunch", "healthy"], time: 15, kcal: 370, protein: 23,
       ingredients: [
         { name: "양배추", amount: "120g (한 줌 반)" }, { name: "참치캔", amount: "작은 것 1개 (100g)" }, { name: "밥", amount: "반 공기" },
         { name: "간장", amount: "1큰술" }, { name: "참기름", amount: "1작은술" }, { name: "물", amount: "2큰술" }, { name: "대파", amount: "조금", opt: true },
@@ -101,7 +120,7 @@
       art: { dish: "bowl", base: "rice", on: ["cabbage", "tuna", "scallion"] },
     },
     {
-      id: "cabbage-steam-tofu-ssam", name: "양배추 찜과 두부 쌈장", tags: ["cabbage", "tofu"], kind: "steam", time: 15, kcal: 220, protein: 14,
+      id: "cabbage-steam-tofu-ssam", name: "양배추 찜과 두부 쌈장", tags: ["cabbage", "tofu"], kind: "steam", meals: ["dinner", "healthy"], time: 15, kcal: 220, protein: 14,
       ingredients: [
         { name: "양배추", amount: "200g (큰 잎 4~5장)" }, { name: "두부", amount: "100g (1/3모)" }, { name: "된장", amount: "1큰술" },
         { name: "참기름", amount: "1작은술" }, { name: "깨", amount: "1작은술", opt: true }, { name: "다진 마늘", amount: "조금" },
@@ -116,7 +135,7 @@
       art: { dish: "plate", big: "wrap" },
     },
     {
-      id: "cabbage-jeon", name: "양배추 전", tags: ["cabbage", "egg"], kind: "pan", time: 15, kcal: 340, protein: 11,
+      id: "cabbage-jeon", name: "양배추 전", tags: ["cabbage", "egg"], kind: "pan", meals: ["lunch", "dinner", "healthy"], time: 15, kcal: 340, protein: 11,
       ingredients: [
         { name: "양배추", amount: "150g (두 줌)" }, { name: "계란", amount: "1개" }, { name: "부침가루", amount: "3큰술" },
         { name: "물", amount: "2큰술" }, { name: "식용유", amount: "1큰술" }, { name: "소금", amount: "한 꼬집" },
@@ -131,7 +150,7 @@
       art: { dish: "plate", big: "jeon" },
     },
     {
-      id: "cabbage-yogurt-slaw", name: "요거트 코울슬로", tags: ["cabbage"], kind: "fresh", time: 10, kcal: 120, protein: 4,
+      id: "cabbage-yogurt-slaw", name: "요거트 코울슬로", tags: ["cabbage"], kind: "fresh", meals: ["breakfast", "lunch", "healthy"], time: 10, kcal: 120, protein: 4,
       ingredients: [
         { name: "양배추", amount: "150g (두 줌)" }, { name: "당근", amount: "30g (엄지만큼)" }, { name: "플레인 요거트", amount: "3큰술" },
         { name: "마요네즈", amount: "1작은술" }, { name: "식초", amount: "1작은술" }, { name: "설탕", amount: "1/2작은술" }, { name: "소금", amount: "두 꼬집" },
@@ -145,7 +164,7 @@
       art: { dish: "bowl", base: "salad", on: ["cabbage", "carrot", "cabbage"] },
     },
     {
-      id: "cabbage-tofu-doenjang-soup", name: "양배추 두부 된장국", tags: ["cabbage", "tofu"], kind: "soup", time: 15, kcal: 150, protein: 12,
+      id: "cabbage-tofu-doenjang-soup", name: "양배추 두부 된장국", tags: ["cabbage", "tofu"], kind: "soup", meals: ["breakfast", "dinner", "healthy"], time: 15, kcal: 150, protein: 12,
       ingredients: [
         { name: "양배추", amount: "100g (한 줌 넉넉히)" }, { name: "두부", amount: "100g (1/3모)" }, { name: "된장", amount: "1큰술" },
         { name: "다진 마늘", amount: "1/2작은술" }, { name: "대파", amount: "조금", opt: true }, { name: "물", amount: "400ml (종이컵 2컵 넉넉히)" },
@@ -160,7 +179,7 @@
       art: { dish: "bowl", base: "broth", color: "#e6c591", steam: true, on: ["cabbage", "tofu", "scallion"] },
     },
     {
-      id: "cabbage-chicken-stirfry", name: "양배추 닭가슴살 볶음", tags: ["cabbage", "meat"], kind: "stirfry", time: 15, kcal: 210, protein: 25,
+      id: "cabbage-chicken-stirfry", name: "양배추 닭가슴살 볶음", tags: ["cabbage", "meat"], kind: "stirfry", meals: ["lunch", "dinner", "healthy"], time: 15, kcal: 210, protein: 25,
       ingredients: [
         { name: "양배추", amount: "150g (두 줌)" }, { name: "익힌 닭가슴살", amount: "100g (1팩)" }, { name: "굴소스", amount: "1작은술" },
         { name: "식용유", amount: "1작은술" }, { name: "다진 마늘", amount: "1/2작은술" }, { name: "후추", amount: "조금" },
@@ -175,7 +194,7 @@
       art: { dish: "pan", on: ["cabbage", "chicken", "cabbage"] },
     },
     {
-      id: "cabbage-egg-toast", name: "양배추 계란 토스트", tags: ["cabbage", "egg"], kind: "bowl", delivery: "토스트", time: 10, kcal: 330, protein: 13,
+      id: "cabbage-egg-toast", name: "양배추 계란 토스트", tags: ["cabbage", "egg"], kind: "bowl", meals: ["breakfast", "lunch", "healthy", "camping"], delivery: "토스트", time: 10, kcal: 330, protein: 13,
       ingredients: [
         { name: "식빵", amount: "2장" }, { name: "양배추", amount: "60g (한 줌)" }, { name: "계란", amount: "1개" },
         { name: "식용유", amount: "1작은술" }, { name: "케첩", amount: "1작은술" }, { name: "소금", amount: "한 꼬집" },
@@ -192,7 +211,7 @@
 
     // ───────── 두부 ─────────
     {
-      id: "tofu-panfry", name: "두부 부침과 양념장", tags: ["tofu"], kind: "pan", time: 15, kcal: 240, protein: 14,
+      id: "tofu-panfry", name: "두부 부침과 양념장", tags: ["tofu"], kind: "pan", meals: ["dinner", "healthy"], time: 15, kcal: 240, protein: 14,
       ingredients: [
         { name: "두부", amount: "150g (반 모)" }, { name: "식용유", amount: "2작은술" }, { name: "간장", amount: "1큰술" },
         { name: "고춧가루", amount: "1/2작은술" }, { name: "참기름", amount: "1/2작은술" }, { name: "대파", amount: "조금", opt: true }, { name: "소금", amount: "한 꼬집" },
@@ -207,7 +226,7 @@
       art: { dish: "plate", big: "slab" },
     },
     {
-      id: "tofu-scramble", name: "두부 스크램블", tags: ["tofu", "egg"], kind: "stirfry", time: 10, kcal: 250, protein: 19,
+      id: "tofu-scramble", name: "두부 스크램블", tags: ["tofu", "egg"], kind: "stirfry", meals: ["breakfast", "healthy"], time: 10, kcal: 250, protein: 19,
       ingredients: [
         { name: "두부", amount: "150g (반 모)" }, { name: "계란", amount: "1개" }, { name: "방울토마토", amount: "5개" },
         { name: "올리브유", amount: "1작은술" }, { name: "대파", amount: "조금", opt: true }, { name: "소금", amount: "두 꼬집" }, { name: "후추", amount: "조금" },
@@ -222,7 +241,7 @@
       art: { dish: "pan", on: ["crumb", "scramble", "tomato", "crumb", "scallion"] },
     },
     {
-      id: "soft-tofu-egg-steam", name: "순두부 계란찜", tags: ["tofu", "egg"], kind: "steam", time: 10, kcal: 250, protein: 20,
+      id: "soft-tofu-egg-steam", name: "순두부 계란찜", tags: ["tofu", "egg"], kind: "steam", meals: ["breakfast", "healthy"], time: 10, kcal: 250, protein: 20,
       ingredients: [
         { name: "순두부", amount: "반 봉 (175g)" }, { name: "계란", amount: "2개" }, { name: "물", amount: "3큰술" },
         { name: "소금", amount: "두 꼬집" }, { name: "대파", amount: "조금", opt: true }, { name: "참기름", amount: "1/2작은술" },
@@ -237,7 +256,7 @@
       art: { dish: "bowl", base: "custard", steam: true, on: ["crumb", "scallion", "crumb"] },
     },
     {
-      id: "tofu-kimchi", name: "두부 김치 볶음", tags: ["tofu"], kind: "stirfry", delivery: "두부김치", time: 15, kcal: 230, protein: 15,
+      id: "tofu-kimchi", name: "두부 김치 볶음", tags: ["tofu"], kind: "stirfry", meals: ["dinner", "healthy", "camping"], delivery: "두부김치", time: 15, kcal: 230, protein: 15,
       ingredients: [
         { name: "두부", amount: "150g (반 모)" }, { name: "김치", amount: "100g (반 컵)" }, { name: "양파", amount: "1/4개" },
         { name: "식용유", amount: "1작은술" }, { name: "설탕", amount: "1/2작은술" }, { name: "참기름", amount: "1/2작은술" },
@@ -252,7 +271,7 @@
       art: { dish: "pan", on: ["tofu", "kimchi"] },
     },
     {
-      id: "tofu-soy-rice", name: "간장 두부 덮밥", tags: ["tofu"], kind: "bowl", time: 15, kcal: 350, protein: 17,
+      id: "tofu-soy-rice", name: "간장 두부 덮밥", tags: ["tofu"], kind: "bowl", meals: ["lunch", "healthy"], time: 15, kcal: 350, protein: 17,
       ingredients: [
         { name: "두부", amount: "150g (반 모)" }, { name: "밥", amount: "반 공기" }, { name: "간장", amount: "1큰술" },
         { name: "올리고당", amount: "1작은술" }, { name: "물", amount: "3큰술" }, { name: "식용유", amount: "1작은술" }, { name: "대파", amount: "조금", opt: true },
@@ -267,7 +286,7 @@
       art: { dish: "bowl", base: "rice", on: ["tofuGold", "tofuGold", "scallion"] },
     },
     {
-      id: "tofu-salad", name: "두부 샐러드", tags: ["tofu"], kind: "fresh", delivery: "샐러드", time: 10, kcal: 220, protein: 16,
+      id: "tofu-salad", name: "두부 샐러드", tags: ["tofu"], kind: "fresh", meals: ["lunch", "healthy"], delivery: "샐러드", time: 10, kcal: 220, protein: 16,
       ingredients: [
         { name: "두부", amount: "150g (반 모)" }, { name: "샐러드 채소", amount: "한 줌 (50g)" }, { name: "방울토마토", amount: "5개" },
         { name: "간장", amount: "1큰술" }, { name: "식초", amount: "1큰술" }, { name: "참기름", amount: "1작은술" }, { name: "깨", amount: "1작은술", opt: true },
@@ -282,7 +301,7 @@
       art: { dish: "plate", on: ["greens", "tofu", "tomato"] },
     },
     {
-      id: "tofu-mushroom-soup", name: "두부 버섯 맑은국", tags: ["tofu", "mushroom"], kind: "soup", time: 15, kcal: 150, protein: 15,
+      id: "tofu-mushroom-soup", name: "두부 버섯 맑은국", tags: ["tofu", "mushroom"], kind: "soup", meals: ["breakfast", "dinner", "healthy"], time: 15, kcal: 150, protein: 15,
       ingredients: [
         { name: "두부", amount: "150g (반 모)" }, { name: "버섯", amount: "50g (한 줌, 아무 버섯)" }, { name: "국간장", amount: "1작은술" },
         { name: "다진 마늘", amount: "1/2작은술" }, { name: "대파", amount: "조금", opt: true }, { name: "소금", amount: "조금" }, { name: "물", amount: "400ml (종이컵 2컵 넉넉히)" },
@@ -297,7 +316,7 @@
       art: { dish: "bowl", base: "broth", color: "#f3e8c6", steam: true, on: ["tofu", "mushroom", "scallion"] },
     },
     {
-      id: "tofu-egg-patty", name: "두부 계란 동그랑땡", tags: ["tofu", "egg"], kind: "pan", time: 20, kcal: 360, protein: 19,
+      id: "tofu-egg-patty", name: "두부 계란 동그랑땡", tags: ["tofu", "egg"], kind: "pan", meals: ["dinner", "healthy"], time: 20, kcal: 360, protein: 19,
       ingredients: [
         { name: "두부", amount: "150g (반 모)" }, { name: "계란", amount: "1개" }, { name: "당근", amount: "20g (조금)" },
         { name: "대파", amount: "조금", opt: true }, { name: "전분", amount: "1큰술" }, { name: "식용유", amount: "1큰술" }, { name: "소금", amount: "두 꼬집" },
@@ -314,7 +333,7 @@
 
     // ───────── 계란 ─────────
     {
-      id: "egg-steam-microwave", name: "전자레인지 계란찜", tags: ["egg"], kind: "steam", time: 10, kcal: 150, protein: 12,
+      id: "egg-steam-microwave", name: "전자레인지 계란찜", tags: ["egg"], kind: "steam", meals: ["breakfast", "healthy"], time: 10, kcal: 150, protein: 12,
       ingredients: [
         { name: "계란", amount: "2개" }, { name: "물", amount: "100ml (종이컵 반 컵 넉넉히)" }, { name: "소금", amount: "두 꼬집" },
         { name: "대파", amount: "조금", opt: true }, { name: "참기름", amount: "몇 방울" },
@@ -329,7 +348,7 @@
       art: { dish: "bowl", base: "custard", steam: true, on: ["scallion"] },
     },
     {
-      id: "egg-tomato-stirfry", name: "토마토 계란 볶음", tags: ["egg"], kind: "stirfry", time: 10, kcal: 260, protein: 13,
+      id: "egg-tomato-stirfry", name: "토마토 계란 볶음", tags: ["egg"], kind: "stirfry", meals: ["breakfast", "lunch", "healthy"], time: 10, kcal: 260, protein: 13,
       ingredients: [
         { name: "계란", amount: "2개" }, { name: "토마토", amount: "1개" }, { name: "대파", amount: "조금", opt: true },
         { name: "식용유", amount: "2작은술" }, { name: "설탕", amount: "1/2작은술" }, { name: "소금", amount: "두 꼬집" },
@@ -344,7 +363,7 @@
       art: { dish: "pan", on: ["scramble", "tomato", "scramble", "tomato", "scallion"] },
     },
     {
-      id: "egg-soy-rice", name: "간장 계란밥", tags: ["egg"], kind: "bowl", time: 10, kcal: 390, protein: 15,
+      id: "egg-soy-rice", name: "간장 계란밥", tags: ["egg"], kind: "bowl", meals: ["breakfast", "lunch", "healthy"], time: 10, kcal: 390, protein: 15,
       ingredients: [
         { name: "밥", amount: "반 공기" }, { name: "계란", amount: "2개" }, { name: "식용유", amount: "1작은술" },
         { name: "간장", amount: "1작은술" }, { name: "참기름", amount: "1작은술" }, { name: "김가루", amount: "조금", opt: true },
@@ -359,7 +378,7 @@
       art: { dish: "bowl", base: "rice", big: "friedegg", on: ["seaweed"] },
     },
     {
-      id: "egg-soft-boiled-salad", name: "반숙란 샐러드", tags: ["egg"], kind: "fresh", delivery: "샐러드", time: 15, kcal: 210, protein: 13,
+      id: "egg-soft-boiled-salad", name: "반숙란 샐러드", tags: ["egg"], kind: "fresh", meals: ["breakfast", "lunch", "healthy"], delivery: "샐러드", time: 15, kcal: 210, protein: 13,
       ingredients: [
         { name: "계란", amount: "2개" }, { name: "샐러드 채소", amount: "60g (한 줌)" }, { name: "방울토마토", amount: "5개" },
         { name: "올리브유", amount: "1작은술" }, { name: "식초", amount: "1작은술" }, { name: "소금", amount: "두 꼬집" }, { name: "후추", amount: "조금" },
@@ -374,7 +393,7 @@
       art: { dish: "plate", big: "halfegg", on: ["greens", "tomato"] },
     },
     {
-      id: "egg-veggie-roll", name: "채소 계란말이", tags: ["egg"], kind: "pan", delivery: "계란말이", time: 15, kcal: 260, protein: 18,
+      id: "egg-veggie-roll", name: "채소 계란말이", tags: ["egg"], kind: "pan", meals: ["breakfast", "dinner", "healthy"], delivery: "계란말이", time: 15, kcal: 260, protein: 18,
       ingredients: [
         { name: "계란", amount: "3개" }, { name: "당근", amount: "20g (조금)" }, { name: "대파", amount: "조금", opt: true },
         { name: "식용유", amount: "1작은술" }, { name: "소금", amount: "두 꼬집" },
@@ -390,7 +409,7 @@
       art: { dish: "plate", big: "roll" },
     },
     {
-      id: "egg-soup", name: "계란국", tags: ["egg"], kind: "soup", time: 10, kcal: 160, protein: 12,
+      id: "egg-soup", name: "계란국", tags: ["egg"], kind: "soup", meals: ["breakfast", "dinner", "healthy"], time: 10, kcal: 160, protein: 12,
       ingredients: [
         { name: "계란", amount: "2개" }, { name: "물", amount: "400ml (종이컵 2컵 넉넉히)" }, { name: "국간장", amount: "1작은술" },
         { name: "다진 마늘", amount: "1/2작은술" }, { name: "대파", amount: "조금", opt: true }, { name: "소금", amount: "조금" }, { name: "참기름", amount: "몇 방울" },
@@ -405,7 +424,7 @@
       art: { dish: "bowl", base: "broth", color: "#f6e6b4", steam: true, on: ["scramble", "scallion", "scramble"] },
     },
     {
-      id: "egg-oatmeal-porridge", name: "계란 오트밀 죽", tags: ["egg"], kind: "bowl", delivery: "죽", time: 10, kcal: 210, protein: 10,
+      id: "egg-oatmeal-porridge", name: "계란 오트밀 죽", tags: ["egg"], kind: "bowl", meals: ["breakfast", "healthy"], delivery: "죽", time: 10, kcal: 210, protein: 10,
       ingredients: [
         { name: "오트밀", amount: "30g (4큰술)" }, { name: "계란", amount: "1개" }, { name: "물", amount: "250ml (종이컵 1컵 반)" },
         { name: "간장", amount: "1/2작은술" }, { name: "대파", amount: "조금", opt: true }, { name: "참기름", amount: "1/2작은술" },
@@ -419,7 +438,7 @@
       art: { dish: "bowl", base: "porridge", steam: true, on: ["scramble", "scallion"] },
     },
     {
-      id: "egg-zucchini-stirfry", name: "애호박 계란 볶음", tags: ["egg"], kind: "stirfry", time: 10, kcal: 200, protein: 13,
+      id: "egg-zucchini-stirfry", name: "애호박 계란 볶음", tags: ["egg"], kind: "stirfry", meals: ["lunch", "dinner", "healthy"], time: 10, kcal: 200, protein: 13,
       ingredients: [
         { name: "계란", amount: "2개" }, { name: "애호박", amount: "1/3개 (100g)" }, { name: "식용유", amount: "1작은술" },
         { name: "소금", amount: "두 꼬집" }, { name: "대파", amount: "조금", opt: true },
@@ -436,7 +455,7 @@
 
     // ───────── 샤브샤브·찜·버섯·고기 ─────────
     {
-      id: "beef-mushroom-shabu", name: "버섯 소고기 샤브샤브", tags: ["meat", "mushroom"], kind: "soup", delivery: "샤브샤브", time: 20, kcal: 320, protein: 31,
+      id: "beef-mushroom-shabu", name: "버섯 소고기 샤브샤브", tags: ["meat", "mushroom"], kind: "soup", meals: ["dinner", "healthy", "camping"], delivery: "샤브샤브", time: 20, kcal: 320, protein: 31,
       ingredients: [
         { name: "샤브샤브용 소고기", amount: "120g" }, { name: "버섯", amount: "100g (두 줌)" }, { name: "배추", amount: "150g (잎 3~4장)" },
         { name: "숙주", amount: "100g (두 줌)", opt: true }, { name: "물", amount: "600ml (종이컵 3컵 넉넉히)" }, { name: "국간장", amount: "1큰술" },
@@ -453,7 +472,7 @@
       art: { dish: "bowl", pot: true, base: "broth", color: "#f3e8c6", steam: true, on: ["beef", "mushroom", "napa", "beef", "sprouts"] },
     },
     {
-      id: "cabbage-pork-steam", name: "양배추 돼지고기 찜", tags: ["cabbage", "meat"], kind: "steam", time: 20, kcal: 290, protein: 24,
+      id: "cabbage-pork-steam", name: "양배추 돼지고기 찜", tags: ["cabbage", "meat"], kind: "steam", meals: ["dinner", "healthy", "camping"], time: 20, kcal: 290, protein: 24,
       ingredients: [
         { name: "양배추", amount: "200g (큰 잎 4~5장)" }, { name: "얇게 썬 돼지고기", amount: "100g (앞다리·샤브샤브용)" }, { name: "숙주", amount: "100g (두 줌)", opt: true },
         { name: "물", amount: "3큰술" }, { name: "소금", amount: "한 꼬집" }, { name: "후추", amount: "조금" },
@@ -470,7 +489,7 @@
       art: { dish: "plate", on: ["cabbage", "pork", "sprouts"] },
     },
     {
-      id: "tofu-mushroom-hotpot", name: "두부 버섯 전골", tags: ["tofu", "mushroom"], kind: "soup", delivery: "버섯전골", time: 20, kcal: 180, protein: 18,
+      id: "tofu-mushroom-hotpot", name: "두부 버섯 전골", tags: ["tofu", "mushroom"], kind: "soup", meals: ["dinner", "healthy", "camping"], delivery: "버섯전골", time: 20, kcal: 180, protein: 18,
       ingredients: [
         { name: "두부", amount: "150g (반 모)" }, { name: "버섯", amount: "100g (두 줌)" }, { name: "배추", amount: "100g (잎 2~3장)" },
         { name: "대파", amount: "조금", opt: true }, { name: "물", amount: "500ml (종이컵 3컵 조금 안 되게)" }, { name: "국간장", amount: "1큰술" },
@@ -486,7 +505,7 @@
       art: { dish: "bowl", pot: true, base: "broth", color: "#eecfa6", steam: true, on: ["tofu", "mushroom", "napa", "scallion"] },
     },
     {
-      id: "mushroom-egg-rice", name: "버섯 계란 덮밥", tags: ["mushroom", "egg"], kind: "bowl", time: 15, kcal: 370, protein: 19,
+      id: "mushroom-egg-rice", name: "버섯 계란 덮밥", tags: ["mushroom", "egg"], kind: "bowl", meals: ["lunch", "healthy"], time: 15, kcal: 370, protein: 19,
       ingredients: [
         { name: "버섯", amount: "100g (두 줌)" }, { name: "계란", amount: "2개" }, { name: "밥", amount: "반 공기" },
         { name: "양파", amount: "1/4개" }, { name: "간장", amount: "1큰술" }, { name: "올리고당", amount: "1작은술" }, { name: "물", amount: "4큰술" },
@@ -501,7 +520,7 @@
       art: { dish: "bowl", base: "rice", on: ["mushroom", "scramble", "mushroom"] },
     },
     {
-      id: "mushroom-garlic-stirfry", name: "버섯 마늘 볶음", tags: ["mushroom"], kind: "stirfry", time: 10, kcal: 130, protein: 6,
+      id: "mushroom-garlic-stirfry", name: "버섯 마늘 볶음", tags: ["mushroom"], kind: "stirfry", meals: ["dinner", "healthy", "camping"], time: 10, kcal: 130, protein: 6,
       ingredients: [
         { name: "버섯", amount: "200g (네 줌)" }, { name: "다진 마늘", amount: "1작은술" }, { name: "올리브유", amount: "2작은술" },
         { name: "간장", amount: "1작은술" }, { name: "후추", amount: "조금" },
@@ -516,7 +535,7 @@
       art: { dish: "pan", on: ["mushroom"] },
     },
     {
-      id: "chicken-cabbage-steam", name: "닭가슴살 양배추 찜", tags: ["meat", "cabbage"], kind: "steam", time: 15, kcal: 200, protein: 30,
+      id: "chicken-cabbage-steam", name: "닭가슴살 양배추 찜", tags: ["meat", "cabbage"], kind: "steam", meals: ["lunch", "dinner", "healthy"], time: 15, kcal: 200, protein: 30,
       ingredients: [
         { name: "닭가슴살", amount: "120g (생것 1쪽)" }, { name: "양배추", amount: "100g (한 줌 넉넉히)" }, { name: "버섯", amount: "50g (한 줌)", opt: true },
         { name: "물", amount: "2큰술" }, { name: "소금", amount: "한 꼬집" }, { name: "후추", amount: "조금" },
@@ -533,7 +552,7 @@
       art: { dish: "plate", on: ["cabbage", "chicken", "mushroom"] },
     },
     {
-      id: "chicken-cucumber-salad", name: "닭가슴살 오이 냉채", tags: ["meat"], kind: "fresh", time: 10, kcal: 180, protein: 24,
+      id: "chicken-cucumber-salad", name: "닭가슴살 오이 냉채", tags: ["meat"], kind: "fresh", meals: ["lunch", "healthy"], time: 10, kcal: 180, protein: 24,
       ingredients: [
         { name: "익힌 닭가슴살", amount: "100g (1팩)" }, { name: "오이", amount: "1/2개" }, { name: "양파", amount: "1/4개", opt: true },
         { name: "간장", amount: "1큰술" }, { name: "식초", amount: "1큰술" }, { name: "설탕", amount: "1/2작은술" },
@@ -549,7 +568,7 @@
       art: { dish: "plate", on: ["chicken", "cucumber"] },
     },
     {
-      id: "soft-tofu-stew", name: "순두부찌개", tags: ["tofu", "egg"], kind: "soup", delivery: "순두부찌개", time: 15, kcal: 330, protein: 24,
+      id: "soft-tofu-stew", name: "순두부찌개", tags: ["tofu", "egg"], kind: "soup", meals: ["dinner", "healthy", "camping"], delivery: "순두부찌개", time: 15, kcal: 330, protein: 24,
       ingredients: [
         { name: "순두부", amount: "1봉 (350g)" }, { name: "계란", amount: "1개" }, { name: "양파", amount: "1/4개" },
         { name: "대파", amount: "조금", opt: true }, { name: "고춧가루", amount: "1큰술" }, { name: "간장", amount: "1큰술" },
@@ -566,7 +585,7 @@
       art: { dish: "bowl", pot: true, base: "broth", color: "#eba585", steam: true, on: ["crumb", "scramble", "crumb", "scallion"] },
     },
     {
-      id: "beef-sprouts-stirfry", name: "소고기 숙주 볶음", tags: ["meat"], kind: "stirfry", time: 10, kcal: 270, protein: 25,
+      id: "beef-sprouts-stirfry", name: "소고기 숙주 볶음", tags: ["meat"], kind: "stirfry", meals: ["lunch", "dinner", "healthy", "camping"], time: 10, kcal: 270, protein: 25,
       ingredients: [
         { name: "얇게 썬 소고기", amount: "100g (샤브샤브·불고기용)" }, { name: "숙주", amount: "200g (한 봉지 가까이)" }, { name: "대파", amount: "조금", opt: true },
         { name: "간장", amount: "1큰술" }, { name: "식용유", amount: "1작은술" }, { name: "다진 마늘", amount: "1/2작은술" }, { name: "후추", amount: "조금" },
@@ -581,7 +600,7 @@
       art: { dish: "pan", on: ["beef", "sprouts", "sprouts"] },
     },
     {
-      id: "cabbage-steak-egg", name: "양배추 구이와 계란 프라이", tags: ["cabbage", "egg"], kind: "pan", time: 15, kcal: 210, protein: 9,
+      id: "cabbage-steak-egg", name: "양배추 구이와 계란 프라이", tags: ["cabbage", "egg"], kind: "pan", meals: ["dinner", "healthy", "camping"], time: 15, kcal: 210, protein: 9,
       ingredients: [
         { name: "양배추", amount: "200g (1/8통, 심이 붙은 채로)" }, { name: "계란", amount: "1개" }, { name: "올리브유", amount: "2작은술" },
         { name: "소금", amount: "두 꼬집" }, { name: "후추", amount: "조금" },
@@ -595,9 +614,105 @@
       tip: "가장자리가 갈색으로 눌어야 단맛이 나요.",
       art: { dish: "plate", big: "steak" },
     },
+
+    // ───────── 캠핑요리 ─────────
+    {
+      id: "millefeuille-nabe", name: "밀푀유나베", tags: ["meat"], kind: "soup", meals: ["camping", "dinner", "healthy"], delivery: "밀푀유나베", time: 25, kcal: 300, protein: 29,
+      ingredients: [
+        { name: "샤브샤브용 소고기", amount: "120g" }, { name: "배추", amount: "200g (잎 5~6장)" }, { name: "깻잎", amount: "10장" },
+        { name: "버섯", amount: "50g (한 줌)", opt: true }, { name: "물", amount: "400ml (종이컵 2컵 넉넉히)" }, { name: "국간장", amount: "1큰술" },
+        { name: "찍어 먹는 간장", amount: "1큰술" }, { name: "식초", amount: "1큰술" },
+      ],
+      steps: [
+        "배추 한 장 위에 깻잎, 소고기를 차례로 올려요. 이것을 3~4번 겹쳐 쌓아요.",
+        "쌓은 것을 4~5cm 폭으로 썰어요.",
+        "냄비 가장자리부터 자른 면이 위로 보이게 빙 둘러 세워 담고, 가운데에 버섯을 넣어요.",
+        "물과 국간장을 붓고 뚜껑을 덮어 중불에서 10분 끓여요.",
+        "간장과 식초를 섞은 소스에 찍어 먹어요.",
+      ],
+      tip: "집에서 미리 겹쳐 썰어 통에 담아 가면, 캠핑장에서는 끓이기만 하면 돼요.",
+      art: { dish: "bowl", pot: true, base: "broth", color: "#f3e8c6", steam: true, on: ["napa", "beef", "greens", "napa", "beef"] },
+    },
+    {
+      id: "fishcake-soup", name: "어묵탕", tags: ["seafood"], kind: "soup", meals: ["camping", "dinner"], delivery: "어묵탕", time: 15, kcal: 230, protein: 16,
+      ingredients: [
+        { name: "어묵", amount: "150g (사각 어묵 3~4장)" }, { name: "대파", amount: "조금", opt: true }, { name: "물", amount: "500ml (종이컵 3컵 조금 안 되게)" },
+        { name: "국간장", amount: "1큰술" }, { name: "다진 마늘", amount: "1/2작은술" }, { name: "청양고추", amount: "1개 (빼도 돼요)" },
+      ],
+      steps: [
+        "어묵을 한입 크기로 썰거나, 길게 접어 꼬치에 꽂아요.",
+        "냄비에 물, 국간장, 마늘을 넣고 끓여요.",
+        "끓으면 어묵을 넣고 중불에서 5분 끓여요.",
+        "대파와 고추를 넣고 1분 더 끓여요.",
+      ],
+      tip: "어묵을 뜨거운 물에 한 번 헹구면 기름기가 빠져 국물이 깔끔해요.",
+      art: { dish: "bowl", pot: true, base: "broth", color: "#f1dfb4", steam: true, on: ["fishcake", "scallion", "fishcake"] },
+    },
+    {
+      id: "gambas", name: "감바스", tags: ["seafood"], kind: "stirfry", meals: ["camping", "dinner"], time: 15, kcal: 420, protein: 29,
+      ingredients: [
+        { name: "새우", amount: "150g (손질 냉동 새우 10~12마리)" }, { name: "통마늘", amount: "6쪽" }, { name: "방울토마토", amount: "5개", opt: true },
+        { name: "올리브유", amount: "4큰술" }, { name: "소금", amount: "두 꼬집" }, { name: "후추", amount: "조금" },
+      ],
+      steps: [
+        "새우는 해동해서 키친타월로 물기를 닦고 소금, 후추를 뿌려요. 마늘은 얇게 썰어요.",
+        "작은 팬에 올리브유와 마늘을 넣고, 약불에서 마늘이 노릇해질 때까지 3분 끓여요.",
+        "새우를 넣고 앞뒤로 2분씩 익혀요.",
+        "방울토마토를 넣고 1분 더 끓인 뒤 소금으로 간을 맞춰요.",
+      ],
+      tip: "칼로리는 기름을 절반쯤 먹는다고 보고 어림했어요. 빵을 찍어 먹으면 더 늘어요.",
+      art: { dish: "pan", on: ["shrimp", "garlic", "tomato", "shrimp", "garlic"] },
+    },
+    {
+      id: "sausage-veggie-stirfry", name: "소시지 채소 볶음", tags: ["meat"], kind: "stirfry", meals: ["camping", "lunch"], time: 15, kcal: 430, protein: 14,
+      ingredients: [
+        { name: "비엔나 소시지", amount: "100g (10~12개)" }, { name: "양파", amount: "1/2개" }, { name: "파프리카", amount: "1/2개" },
+        { name: "케첩", amount: "2큰술" }, { name: "간장", amount: "1작은술" }, { name: "올리고당", amount: "1작은술" }, { name: "식용유", amount: "1작은술" },
+      ],
+      steps: [
+        "소시지에 칼집을 2~3번 넣고, 양파와 파프리카는 한입 크기로 썰어요.",
+        "달군 팬에 기름을 두르고 소시지를 중불에서 2분 볶아요.",
+        "양파와 파프리카를 넣고 2분 더 볶아요.",
+        "케첩, 간장, 올리고당을 넣고 1분 볶아 윤기를 내요.",
+      ],
+      tip: "소시지를 끓는 물에 30초 데치면 짠맛과 기름이 줄어요.",
+      art: { dish: "pan", on: ["sausage", "pepper", "sausage", "scallion"] },
+    },
+    {
+      id: "tuna-kimchi-stew", name: "참치 김치찌개", tags: ["seafood", "tofu"], kind: "soup", meals: ["camping", "dinner"], delivery: "김치찌개", time: 20, kcal: 280, protein: 30,
+      ingredients: [
+        { name: "김치", amount: "150g (한 컵 조금 안 되게)" }, { name: "참치캔", amount: "작은 것 1개 (100g)" }, { name: "두부", amount: "100g (1/3모)" },
+        { name: "양파", amount: "1/4개" }, { name: "대파", amount: "조금", opt: true }, { name: "고춧가루", amount: "1작은술" },
+        { name: "설탕", amount: "1/2작은술" }, { name: "물", amount: "300ml (종이컵 1컵 반 넉넉히)" },
+      ],
+      steps: [
+        "김치와 양파는 한입 크기로, 두부는 도톰하게 썰어요.",
+        "냄비에 김치, 양파, 고춧가루, 설탕, 물을 넣고 끓여요.",
+        "끓으면 중불로 줄여 8분 끓여요.",
+        "기름을 뺀 참치와 두부를 넣고 3분 더 끓인 뒤 대파를 올려요.",
+      ],
+      tip: "참치캔 기름을 한 숟갈 넣으면 국물이 더 진해져요.",
+      art: { dish: "bowl", pot: true, base: "broth", color: "#eba585", steam: true, on: ["kimchi", "tofu", "tuna", "scallion"] },
+    },
+    {
+      id: "pork-neck-grill", name: "목살 구이와 구운 채소", tags: ["meat", "mushroom"], kind: "pan", meals: ["camping", "dinner"], time: 20, kcal: 400, protein: 30,
+      ingredients: [
+        { name: "돼지 목살", amount: "150g (구이용 1장)" }, { name: "버섯", amount: "100g (두 줌)" }, { name: "양파", amount: "1/2개" },
+        { name: "애호박", amount: "1/3개", opt: true }, { name: "소금", amount: "두 꼬집" }, { name: "후추", amount: "조금" },
+      ],
+      steps: [
+        "목살은 굽기 20분 전에 꺼내 소금, 후추를 뿌려요.",
+        "양파와 애호박은 1cm 두께로 썰고, 버섯은 통째로 준비해요.",
+        "달군 팬이나 그릴에 목살을 올려 센 불에서 앞뒤로 3분씩 구워요.",
+        "불을 줄이고 채소를 고기 옆에 올려, 고기 기름에 4분 구워요.",
+        "고기를 한입 크기로 잘라 속까지 익었는지 확인해요.",
+      ],
+      tip: "자주 뒤집지 않아야 겉이 노릇하게 익어요.",
+      art: { dish: "plate", big: "chop", on: ["mushroom", "zucchini"] },
+    },
   ];
 
-  const DATA = { INGREDIENTS: INGREDIENTS, KINDS: KINDS, PANTRY: PANTRY, RECIPES: RECIPES };
+  const DATA = { MEALS: MEALS, INGREDIENTS: INGREDIENTS, KINDS: KINDS, PANTRY: PANTRY, RECIPES: RECIPES };
   if (typeof module !== "undefined" && module.exports) module.exports = DATA;
   else root.RECIPE_DATA = DATA;
 })(typeof self !== "undefined" ? self : this);

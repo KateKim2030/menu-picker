@@ -11,37 +11,34 @@ PORT = 8767
 sd = app / "shots"; sd.mkdir(exist_ok=True)
 
 def st(**kw):
-    s = {"favs": [], "have": [], "cands": []}
+    s = {"favs": [], "have": []}
     s.update(kw); return s
 
 HAVE = ["egg", "cabbage", "tofu", "scallion", "rice", "onion", "napa"]
-D = 'openRecipe("tofu-mushroom-hotpot");'
+D = 'openRecipe("millefeuille-nabe");'
 STATES = {
-    "01_today": (st(), ""),
-    "02_today_cands": (st(cands=["beef-mushroom-shabu", "egg-soup"], favs=["egg-soup"]), ""),
-    "03_today_low": (st(have=HAVE), "scrollTo(0,99999)"),
-    "04_book": (st(), 'go("book")'),
-    "05_book_filter": (st(have=HAVE, favs=["soft-tofu-stew"]), 'fTag="tofu";fKind="soup";go("book")'),
-    "06_book_low": (st(), 'go("book");scrollTo(0,1500)'),
-    "07_pantry": (st(have=HAVE), 'go("pantry")'),
-    "08_detail": (st(have=HAVE, cands=["tofu-mushroom-hotpot"]), D),
-    "09_detail_ing": (st(have=HAVE), D + 'checks[openId]={0:true,2:true};renderDetail();$("detail").scrollTop=560'),
-    "10_detail_steps": (st(have=HAVE), D + '$("detail").scrollTop=1150'),
-    "11_decide": (st(have=HAVE, cands=["beef-mushroom-shabu", "egg-soup", "cabbage-pork-steam"]),
-                  'document.querySelector("[data-decide]").click();document.querySelector("[data-pick]").click()'),
-    "12_detail_shabu": (st(), 'openRecipe("beef-mushroom-shabu")'),
+    "01_home": (st(favs=["egg-soup", "gambas"]), ""),
+    "02_breakfast": (st(), 'go("meal:breakfast")'),
+    "03_dinner_tofu": (st(have=HAVE, favs=["soft-tofu-stew"]), 'go("meal:dinner");fTag="tofu";render()'),
+    "04_healthy": (st(), 'go("meal:healthy")'),
+    "05_camping": (st(), 'go("meal:camping")'),
+    "06_camping_low": (st(), 'go("meal:camping");scrollTo(0,1150)'),
+    "07_detail": (st(), D),
+    "08_detail_ing": (st(have=HAVE), D + 'checks[openId]={0:true,1:true};renderDetail();$("detail").scrollTop=470'),
+    "09_detail_steps": (st(), D + '$("detail").scrollTop=1010'),
+    "10_favs": (st(favs=["egg-soup", "gambas", "cabbage-jeon"]), 'go("favs")'),
+    "11_pantry": (st(have=HAVE), 'go("pantry")'),
+    "12_pantry_low": (st(have=HAVE), 'go("pantry");scrollTo(0,99999)'),
     # every dish drawing on one sheet — look here after adding a recipe
     "13_gallery": (st(), 'document.body.innerHTML="<div style=\\"display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px\\">"+RECIPES.map(r=>"<div style=\\"background:#D0E6FD;border-radius:8px;padding:3px\\">"+ART.dish(r.art)+"</div>").join("")+"</div>"'),
 }
 if only:
     STATES = {k: v for k, v in STATES.items() if only in k}
 for name, (state, act) in STATES.items():
-    # State is written into the page itself (not shared localStorage), so the iframes can't race each other;
-    # Math.random is seeded so the three suggestions are the same on every run.
-    init = "let __s=11;Math.random=()=>(__s=(__s*16807)%2147483647)/2147483647;let S = " + json.dumps(state) + ";"
+    # State is written into the page itself (not shared localStorage), so the iframes can't race each other.
     js = ("fetch('../index.html').then(r=>r.text()).then(h=>{"
           "h=h.replace('<head>','<head><base href=\"../\">')"
-          ".replace('let S = MENU.load(localStorage, DATA);'," + json.dumps(init) + ")"
+          ".replace('let S = MENU.load(localStorage, DATA);'," + json.dumps("let S = " + json.dumps(state) + ";") + ")"
           ".replace('MENU.save(localStorage, S)','void 0')"
           ".replace('</body>','<script>setTimeout(()=>{' + " + json.dumps(act) + " + '},300)<\\/script></body>');"
           "document.open();document.write(h);document.close();});")

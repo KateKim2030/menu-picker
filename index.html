@@ -25,7 +25,7 @@ html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: v
 body { min-height: 100dvh; }
 button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; padding: 0; }
 svg.art, svg.ico { display: block; width: 100%; height: auto; }
-.wrap { max-width: 520px; margin: 0 auto; padding: 0 16px calc(150px + env(safe-area-inset-bottom)); }
+.wrap { max-width: 520px; margin: 0 auto; padding: 0 16px calc(40px + env(safe-area-inset-bottom)); }
 
 header { padding: calc(14px + env(safe-area-inset-top)) 0 10px; }
 .logo { font-family: var(--title); font-size: 26px; line-height: 1; }
@@ -40,26 +40,34 @@ h3 { font-family: var(--title); font-weight: 400; font-size: 21px; margin: 26px 
 .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 56px; border-radius: 18px; padding: 0 14px;
   font-family: var(--title); font-size: 21px; background: var(--ink); color: var(--bg2); box-shadow: 0 6px 0 var(--ink-d); transition: transform .08s, box-shadow .08s; }
 .btn:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--ink-d); }
-.btn.sky { background: var(--sky); color: var(--ink); box-shadow: 0 6px 0 var(--sky-d); }
-.btn.sky:active { box-shadow: 0 1px 0 var(--sky-d); }
 .btn.ghost { background: var(--card); color: var(--ink); box-shadow: 0 5px 0 var(--edge); font-family: var(--fun); font-size: 18px; min-height: 52px; }
 .btn.ghost:active { box-shadow: 0 1px 0 var(--edge); }
-.btn.small { width: auto; min-height: 40px; font-size: 15px; border-radius: 13px; padding: 0 14px; box-shadow: 0 4px 0 var(--ink-d); font-family: var(--fun); }
-.btn.on { background: var(--sky); color: var(--ink); box-shadow: 0 6px 0 var(--sky-d); }
-.btn.small.on { box-shadow: 0 4px 0 var(--sky-d); }
-.btn + .btn { margin-top: 14px; }
+.back { min-height: 44px; padding: 0 16px 0 10px; border-radius: 14px; background: var(--card); font-size: 17px; box-shadow: 0 4px 0 var(--edge); }
+
+/* home: five boxes */
+.tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px 10px; margin-top: 18px; }
+.tile { grid-column: span 2; background: var(--bg2); border: 2px solid var(--line); border-radius: 22px; padding: 16px 6px 12px; text-align: center; box-shadow: 0 5px 0 var(--edge);
+  position: relative; transition: transform .08s, box-shadow .08s; }
+.tile:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--edge); }
+.tile.wide { grid-column: span 3; }
+.tile i { display: block; width: 64px; height: 64px; margin: 0 auto 8px; border-radius: 50%; background: var(--sky); padding: 9px; flex: none; }
+.tile b { display: block; font-family: var(--title); font-weight: 400; font-size: 23px; line-height: 1.15; word-break: keep-all; }
+.tile small { display: block; font-size: 13px; color: var(--soft); margin-top: 4px; }
+.tile small em { font-family: var(--num); font-style: normal; font-size: 12.5px; }
+.tile.now { border: 3px solid var(--ink); background: var(--quest); }
+.tile .badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg2); font-size: 12.5px; border-radius: 9px; padding: 2px 10px; white-space: nowrap; }
+.two { display: flex; gap: 10px; margin-top: 24px; }
+.two .btn { font-size: 17px; }
+.pagebar { padding: 0 0 4px; }
 
 /* menu cards */
 .menu { display: flex; gap: 12px; align-items: center; background: var(--bg2); border: 2px solid var(--line); border-radius: 22px; padding: 10px; margin-bottom: 12px; position: relative; cursor: pointer; }
 .menu .pic { flex: none; width: 104px; background: var(--sky); border-radius: 15px; padding: 6px; }
-.menu.big .pic { width: 124px; }
 .menu .txt { min-width: 0; flex: 1; padding-right: 30px; }
 .menu .name { font-family: var(--title); font-size: 19px; line-height: 1.2; margin: 2px 0 4px; word-break: keep-all; }
-.menu.big .name { font-size: 21px; }
 .meta { font-size: 13.5px; color: var(--soft); line-height: 1.4; }
 .meta span { white-space: nowrap; }
 .meta b { font-family: var(--num); font-weight: 400; font-size: 13px; color: var(--ink); }
-.menu .btn.small { margin-top: 8px; }
 .heart { position: absolute; top: 4px; right: 4px; width: 44px; height: 44px; display: grid; place-items: center; }
 .heart svg { width: 24px; height: 24px; fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
 .heart.on svg { fill: var(--pink); }
@@ -70,16 +78,10 @@ h3 { font-family: var(--title); font-weight: 400; font-size: 21px; margin: 26px 
 .chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .chips.scroll { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 8px; scrollbar-width: none; }
 .chips.scroll::-webkit-scrollbar { display: none; }
-.chip { flex: none; min-height: 42px; padding: 0 15px; border-radius: 21px; background: var(--bg2); border: 2px solid var(--line); font-size: 16px; display: inline-flex; align-items: center; gap: 6px; }
+.chip { flex: none; min-height: 42px; padding: 0 15px; border-radius: 21px; background: var(--bg2); border: 2px solid var(--line); font-size: 16px; display: inline-flex; align-items: center; }
 .chip.on { background: var(--ink); border-color: var(--ink); color: var(--bg2); }
-.ing { flex: none; width: 66px; text-align: center; font-size: 14.5px; }
-.ing i { display: block; width: 60px; height: 60px; margin: 0 auto 4px; border-radius: 50%; background: var(--bg2); border: 2px solid var(--line); padding: 7px; }
-.ing.on i { background: var(--sky); border-color: var(--ink); border-width: 3px; padding: 6px; }
-.ing.on { color: var(--ink); }
 .label { font-size: 13px; color: var(--dim); margin: 10px 0 6px; }
 .empty { text-align: center; color: var(--soft); padding: 26px 10px; font-size: 16px; line-height: 1.5; }
-.card { background: var(--bg2); border: 2px solid var(--line); border-radius: 22px; padding: 16px; }
-.card p { margin: 0 0 12px; color: var(--soft); font-size: 15.5px; line-height: 1.45; }
 .foot { font-size: 13px; color: var(--dim); text-align: center; margin-top: 22px; line-height: 1.5; }
 
 /* pantry */
@@ -88,25 +90,11 @@ h3 { font-family: var(--title); font-weight: 400; font-size: 21px; margin: 26px 
 .pchip.on { background: var(--sky); border-color: var(--ink); color: var(--ink); }
 .pchip.on::before { border-color: var(--ink); background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M4 9.5l3.2 3L14 5.5' fill='none' stroke='%23fbf6ee' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat; }
 
-/* bottom: candidate bar + tabs */
-.bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; }
-.bottom > div { max-width: 520px; margin: 0 auto; }
-.cbar { margin: 0 12px 8px !important; display: none; align-items: center; gap: 10px; background: var(--ink); color: var(--bg2); border-radius: 18px; padding: 8px 8px 8px 16px; box-shadow: 0 6px 16px #16266033; }
-.cbar.show { display: flex; }
-.cbar span { flex: 1; font-size: 16px; }
-.cbar span b { font-family: var(--num); font-weight: 400; color: var(--gold); }
-.cbar button { background: var(--gold); color: var(--ink); font-family: var(--title); font-size: 18px; border-radius: 13px; min-height: 44px; padding: 0 16px; }
-nav { background: #fbf6eef5; border-top: 2px solid var(--line); }
-nav > div { max-width: 520px; margin: 0 auto; display: flex; padding-bottom: env(safe-area-inset-bottom); }
-nav button { flex: 1; min-height: 58px; font-size: 16px; color: var(--dim); }
-nav button.on { color: var(--ink); font-family: var(--title); font-size: 17px; box-shadow: inset 0 3px 0 var(--ink); }
-
-/* full screens */
+/* recipe screen */
 .screen { position: fixed; inset: 0; z-index: 10; background: var(--bg); overflow-y: auto; display: none; overscroll-behavior: contain; }
 .screen.show { display: block; }
 .screen .in { max-width: 520px; margin: 0 auto; padding: 0 16px calc(40px + env(safe-area-inset-bottom)); }
 .bar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(var(--bg) 80%, transparent); padding: calc(8px + env(safe-area-inset-top)) 0 12px; }
-.back { min-height: 44px; padding: 0 16px 0 10px; border-radius: 14px; background: var(--card); font-size: 17px; box-shadow: 0 4px 0 var(--edge); }
 .bar .heart { position: static; background: var(--card); border-radius: 14px; box-shadow: 0 4px 0 var(--edge); }
 .hero { background: var(--sky); border-radius: 26px; padding: 14px 40px; }
 .hero svg { max-width: 260px; margin: 0 auto; }
@@ -133,16 +121,8 @@ nav button.on { color: var(--ink); font-family: var(--title); font-size: 17px; b
 .steps li i { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--bg2); font-family: var(--num); font-style: normal; font-size: 16px; display: grid; place-items: center; margin-top: -1px; }
 .tip { background: var(--quest); border-radius: 18px; padding: 14px 16px; font-size: 16.5px; line-height: 1.5; margin: 6px 0 22px; }
 .tip b { display: block; font-family: var(--title); font-weight: 400; font-size: 15px; color: var(--hi); margin-bottom: 2px; }
-.cand { background: var(--bg2); border: 2px solid var(--line); border-radius: 22px; padding: 12px; margin-bottom: 14px; }
-.cand.pick { border: 3px solid var(--ink); background: var(--quest); }
-.cand .menu { border: 0; padding: 0; margin: 0 0 12px; background: none; }
-.cand .menu .txt { padding-right: 0; }
-.cand .acts { display: flex; gap: 10px; }
-.cand .acts .btn { margin: 0; min-height: 48px; font-size: 18px; }
-.cand .acts .btn.ghost { width: 84px; flex: none; font-size: 16px; min-height: 48px; }
-.pickmsg { font-family: var(--title); color: var(--hi); font-size: 16px; margin: 0 0 8px; }
-#toast { position: fixed; left: 50%; bottom: calc(150px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 20; background: var(--ink); color: var(--bg2); border-radius: 14px; padding: 11px 16px; font-size: 15.5px;
-  max-width: calc(100% - 40px); text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+#toast { position: fixed; left: 50%; bottom: calc(40px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 20; background: var(--ink); color: var(--bg2); border-radius: 14px; padding: 11px 16px; font-size: 15.5px;
+  width: max-content; max-width: calc(100% - 40px); text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
 #toast.show { opacity: 1; }
 </style>
 </head>
@@ -151,13 +131,6 @@ nav button.on { color: var(--ink); font-family: var(--title); font-size: 17px; b
   <header><div class="logo">오늘 <b>뭐</b> 먹지<small>PICK A MENU</small></div></header>
   <main id="view"></main>
 </div>
-<div class="bottom">
-  <div class="cbar" id="cbar"><span id="cbar-txt"></span><button data-decide>결정하기</button></div>
-  <nav><div>
-    <button data-tab="today">오늘</button><button data-tab="book">메뉴 도감</button><button data-tab="pantry">우리 집 재료</button>
-  </div></nav>
-</div>
-<section class="screen" id="decide"><div class="in" id="decide-in"></div></section>
 <section class="screen" id="detail"><div class="in" id="detail-in"></div></section>
 <div id="toast" role="status"></div>
 
@@ -166,6 +139,7 @@ nav button.on { color: var(--ink); font-family: var(--title); font-size: 17px; b
 <script src="art.js" charset="utf-8"></script>
 <script>
 "use strict";
+// Three levels: home (five boxes) -> the dishes of one box -> one recipe.
 const DATA = RECIPE_DATA, RECIPES = DATA.RECIPES;
 let S = MENU.load(localStorage, DATA);
 const $ = (id) => document.getElementById(id);
@@ -173,60 +147,55 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const byId = (id) => RECIPES.find((r) => r.id === id);
 const nameOf = (list, id) => (list.find((x) => x.id === id) || {}).name || "";
 const save = () => MENU.save(localStorage, S);
-const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.3-4.5-9.3-9C1.2 8 3.1 4.6 6.6 4.6c2.100 0 3.900 1.100 5.400 3c1.500-1.900 3.300-3 5.400-3c3.500 0 5.400 3.400 3.900 6.900c-2 4.500-9.300 9-9.300 9z"/></svg>';
+const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.3-4.5-9.3-9C1.2 8 3.1 4.6 6.6 4.6c2.1 0 3.9 1.1 5.4 3c1.5-1.9 3.3-3 5.4-3c3.5 0 5.4 3.4 3.900 6.900c-2 4.500-9.300 9-9.300 9z"/></svg>';
 
-let tab = "today", fTag = "all", fKind = "all";
-let shown = MENU.suggest(RECIPES, 3, Math.random).map((r) => r.id); // today's three
-let openId = null, picked = null;
+let page = "home", fTag = "all"; // page: "home" | "meal:<id>" | "favs" | "pantry"
+let openId = null;
 const checks = {}; // ingredient ticks while cooking; kept only until the app is closed
 
 // ---------------- pieces ----------------
 const meta = (r) => '<div class="meta"><span><b>' + r.time + '</b>분</span> · <span>약 <b>' + r.kcal + '</b>kcal</span> · <span>단백질 약 <b>' + r.protein + "</b>g</span></div>";
 const heartBtn = (r) => '<button class="heart' + (S.favs.includes(r.id) ? " on" : "") + '" data-fav="' + r.id + '" aria-label="찜">' + HEART + "</button>";
-const candBtn = (r) => { const on = S.cands.includes(r.id); return '<button class="btn small' + (on ? " on" : "") + '" data-cand="' + r.id + '">' + (on ? "후보에 담았어요 ✓" : "후보에 담기") + "</button>"; };
 // One line about what's at home; empty until the pantry has been filled in.
 function status(r) {
   if (!S.have.length) return "";
   const s = MENU.split(r, S.have, DATA.PANTRY);
-  if (!s.need.length) return '<span class="status">' + (s.have.length ? "집에 있는 재료로 돼요" : "양념만 있으면 돼요") + "</span>";
+  if (!s.need.length) return '<span class="status">집에 있는 재료로 돼요</span>';
   return '<span class="status need">살 것: ' + esc(s.need.map((g) => g.name).join(", ")) + "</span>";
 }
-function menuCard(r, o) {
-  o = o || {};
-  return '<div class="menu' + (o.big ? " big" : "") + '" data-open="' + r.id + '" role="button" tabindex="0"><div class="pic">' + ART.dish(r.art) + '</div><div class="txt">' +
-    '<div class="eyebrow">' + esc(nameOf(DATA.KINDS, r.kind) + " · " + nameOf(DATA.INGREDIENTS, r.tags[0])) + '</div><div class="name">' + esc(r.name) + "</div>" + meta(r) +
-    (o.status ? status(r) : "") + (o.cand ? "<div>" + candBtn(r) + "</div>" : "") + "</div>" + (o.noHeart ? "" : heartBtn(r)) + "</div>";
+function menuCard(r) {
+  return '<div class="menu" data-open="' + r.id + '" role="button" tabindex="0"><div class="pic">' + ART.dish(r.art) + '</div><div class="txt">' +
+    '<div class="eyebrow">' + esc(nameOf(DATA.KINDS, r.kind) + " · " + nameOf(DATA.INGREDIENTS, r.tags[0])) + '</div><div class="name">' + esc(r.name) + "</div>" + meta(r) + status(r) + "</div>" + heartBtn(r) + "</div>";
 }
+const BACKBAR = '<div class="pagebar"><button class="back" data-home>‹ 처음으로</button></div>';
 
-// ---------------- tabs ----------------
-function viewToday() {
-  let h = "<h2>오늘 " + MENU.meal(new Date().getHours()) + ",<br>뭐 먹을까?</h2><p class=\"sub\">눌러서 자세히 보고, 끌리면 후보에 담아요. 3개까지 담을 수 있어요.</p>";
-  h += shown.map((id) => menuCard(byId(id), { big: true, cand: true })).join("");
-  h += '<button class="btn ghost" data-shuffle>다른 메뉴 보기</button>';
-  h += "<h3>이런 게 당겨요</h3><div class=\"chips\">" + DATA.KINDS.map((k) => '<button class="chip" data-gokind="' + k.id + '">' + esc(k.name) + "</button>").join("") +
-    DATA.INGREDIENTS.map((k) => '<button class="chip" data-gotag="' + k.id + '">' + esc(k.name) + "</button>").join("") + "</div>";
-  h += "<h3>우리 집 재료로</h3>";
-  if (!S.have.length) h += '<div class="card"><p>집에 있는 재료를 눌러 두면, 지금 바로 만들 수 있는 메뉴를 여기서 알려 드려요.</p><button class="btn sky" data-tab="pantry">재료 체크하러 가기</button></div>';
-  else {
-    const list = MENU.cookable(RECIPES, S.have, DATA.PANTRY, 4);
-    h += list.length ? list.map((x) => menuCard(x.r, { status: true })).join("") : '<div class="empty">지금 재료로 바로 되는 메뉴가 아직 없어요.<br>재료를 조금 더 체크해 보세요.</div>';
-  }
+// ---------------- pages ----------------
+function viewHome() {
+  const now = MENU.mealNow(new Date().getHours());
+  const tile = (m, wide) => '<button class="tile' + (wide ? " wide" : "") + (m.id === now ? " now" : "") + '" data-page="meal:' + m.id + '">' + (m.id === now ? '<span class="badge">지금</span>' : "") +
+    "<i>" + ART.icon(m.id) + "</i><span><b>" + esc(m.name) + "</b><small>메뉴 <em>" + MENU.list(RECIPES, m.id).length + "</em>개</small></span></button>";
+  let h = "<h2>오늘 " + esc(nameOf(DATA.MEALS, now)) + ',<br>뭐 먹을까?</h2><p class="sub">칸을 누르면 어울리는 메뉴가 나와요.</p>';
+  h += '<div class="tiles">' + DATA.MEALS.map((m, i) => tile(m, i >= 3)).join("") + "</div>";
+  h += '<div class="two"><button class="btn ghost" data-page="favs">찜한 메뉴' + (S.favs.length ? " " + S.favs.length + "개" : "") + '</button><button class="btn ghost" data-page="pantry">우리 집 재료</button></div>';
   return h + '<p class="foot">칼로리·단백질은 재료 양으로 어림한 추정치예요.</p>';
 }
-function viewBook() {
-  const ing = (id, name) => '<button class="ing' + (fTag === id ? " on" : "") + '" data-tag="' + id + '"><i>' + ART.icon(id) + "</i>" + esc(name) + "</button>";
-  const kind = (id, name) => '<button class="chip' + (fKind === id ? " on" : "") + '" data-kind="' + id + '">' + esc(name) + "</button>";
-  let h = "<h2>메뉴 도감</h2><p class=\"sub\">재료와 종류를 같이 고르면 겹치는 메뉴만 보여요.</p>";
-  h += '<div class="chips scroll">' + ing("all", "전체") + DATA.INGREDIENTS.map((k) => ing(k.id, k.name)).join("") + "</div>";
-  h += '<div class="chips scroll">' + kind("all", "모든 종류") + DATA.KINDS.map((k) => kind(k.id, k.name)).join("") + "</div>";
-  const list = MENU.filter(RECIPES, fTag, fKind), p = MENU.pinFavs(list, S.favs);
-  if (!list.length) return h + '<div class="empty">이 조합의 메뉴는 아직 없어요.<br>재료나 종류 하나를 풀어 보세요.</div>';
-  if (p.favs.length) h += '<div class="label">찜한 메뉴 ' + p.favs.length + "개</div>" + p.favs.map((r) => menuCard(r, { status: true })).join("");
-  if (p.rest.length) h += '<div class="label">' + (p.favs.length ? "그 밖의 메뉴 " : "메뉴 ") + p.rest.length + "개</div>" + p.rest.map((r) => menuCard(r, { status: true })).join("");
+function viewMeal(id) {
+  const m = DATA.MEALS.find((x) => x.id === id), tags = MENU.tagsIn(MENU.list(RECIPES, id), DATA.INGREDIENTS);
+  const chip = (t, name) => '<button class="chip' + (fTag === t ? " on" : "") + '" data-tag="' + t + '">' + esc(name) + "</button>";
+  let h = BACKBAR + "<h2>" + esc(m.name) + '</h2><p class="sub">' + esc(m.desc) + "</p>";
+  h += '<div class="chips scroll">' + chip("all", "전체") + tags.map((t) => chip(t.id, t.name)).join("") + "</div>";
+  const p = MENU.pinFavs(MENU.list(RECIPES, id, fTag), S.favs);
+  if (p.favs.length) h += '<div class="label">찜한 메뉴 ' + p.favs.length + "개</div>" + p.favs.map(menuCard).join("");
+  if (p.rest.length) h += '<div class="label">' + (p.favs.length ? "그 밖의 메뉴 " : "메뉴 ") + p.rest.length + "개</div>" + p.rest.map(menuCard).join("");
   return h;
 }
+function viewFavs() {
+  const list = S.favs.map(byId).filter(Boolean);
+  return BACKBAR + "<h2>찜한 메뉴</h2>" + (list.length ? '<p class="sub">자주 하는 요리를 모아 뒀어요.</p>' + list.map(menuCard).join("")
+    : '<div class="empty">아직 찜한 메뉴가 없어요.<br>메뉴 오른쪽 위의 하트를 눌러 담아 보세요.</div>');
+}
 function viewPantry() {
-  let h = "<h2>우리 집 재료</h2><p class=\"sub\">있는 것만 눌러 두세요. 양은 적지 않아도 돼요.<br>간장·소금·기름 같은 양념은 따지지 않아요.</p>";
+  let h = BACKBAR + '<h2>우리 집 재료</h2><p class="sub">있는 것만 눌러 두세요. 양은 적지 않아도 돼요.<br>간장·소금·기름 같은 양념은 따지지 않아요.</p>';
   const groups = [];
   DATA.PANTRY.forEach((p) => { if (!groups.includes(p.group)) groups.push(p.group); });
   groups.forEach((gr) => {
@@ -234,21 +203,17 @@ function viewPantry() {
       '<button class="pchip' + (S.have.includes(p.id) ? " on" : "") + '" data-have="' + p.id + '">' + esc(p.name) + "</button>").join("") + "</div>";
   });
   if (S.have.length) {
-    const n = RECIPES.filter((r) => { const s = MENU.split(r, S.have, DATA.PANTRY); return s.have.length && !s.need.length; }).length;
-    h += '<div class="card" style="margin-top:22px"><p>지금 재료로 바로 되는 메뉴가 <b style="color:var(--ink)">' + n + '개</b> 있어요.</p><button class="btn sky" data-tab="today">오늘 메뉴 보러 가기</button></div>' +
-      '<button class="btn ghost" data-clearhave style="margin-top:14px">전부 지우기</button>';
+    const list = MENU.cookable(RECIPES, S.have, DATA.PANTRY, 4);
+    h += "<h3>지금 재료로 되는 메뉴</h3>" + (list.length ? list.map((x) => menuCard(x.r)).join("") : '<div class="empty">아직 없어요. 재료를 조금 더 체크해 보세요.</div>') +
+      '<button class="btn ghost" data-clearhave style="margin-top:8px">전부 지우기</button>';
   }
   return h;
 }
 function render() {
-  $("view").innerHTML = tab === "book" ? viewBook() : tab === "pantry" ? viewPantry() : viewToday();
-  document.querySelectorAll("nav button").forEach((b) => b.classList.toggle("on", b.dataset.tab === tab));
-  $("cbar").classList.toggle("show", S.cands.length > 0);
-  $("cbar-txt").innerHTML = "후보 <b>" + S.cands.length + "</b>개 담았어요";
+  $("view").innerHTML = page === "favs" ? viewFavs() : page === "pantry" ? viewPantry() : page.startsWith("meal:") ? viewMeal(page.slice(5)) : viewHome();
   if (isOpen("detail")) renderDetail();
-  if (isOpen("decide")) renderDecide();
 }
-function go(t) { tab = t; render(); scrollTo(0, 0); if (t !== "today") armBack(); }
+function go(p) { page = p; fTag = "all"; render(); scrollTo(0, 0); if (p !== "home") armBack(); }
 
 // ---------------- recipe screen ----------------
 function renderDetail() {
@@ -258,36 +223,22 @@ function renderDetail() {
   const done = r.ingredients.filter((_, i) => ck[i]).length;
   let h = '<div class="bar"><button class="back" data-back>‹ 뒤로</button>' + heartBtn(r) + "</div>";
   h += '<div class="hero">' + ART.dish(r.art) + "</div>";
-  h += '<div class="eyebrow" style="margin-top:14px">' + esc(nameOf(DATA.KINDS, r.kind) + " · " + r.tags.map((t) => nameOf(DATA.INGREDIENTS, t)).join(" · ")) + "</div><h2 style=\"margin-top:2px\">" + esc(r.name) + "</h2>";
+  h += '<div class="eyebrow" style="margin-top:14px">' + esc(nameOf(DATA.KINDS, r.kind) + " · " + r.tags.map((t) => nameOf(DATA.INGREDIENTS, t)).join(" · ")) + '</div><h2 style="margin-top:2px">' + esc(r.name) + "</h2>";
   h += '<div class="stats"><div class="stat">조리 시간<b>' + r.time + '<small>분</small></b></div><div class="stat">칼로리<b><small>약 </small>' + r.kcal + '</b></div><div class="stat">단백질<b><small>약 </small>' + r.protein + "<small>g</small></b></div></div>";
   h += '<p class="note">1인분 기준이에요. 칼로리·단백질은 재료 양으로 어림한 추정치이고 공식 수치가 아니에요.</p>';
-  h += candBtn(r).replace("btn small", "btn");
-  if (r.delivery) h += '<button class="btn ghost" data-copy="' + esc(r.delivery) + '">배달로 먹을래요 · 검색어 복사</button>';
-  h += '<div class="h3row"><h3>재료</h3><span>' + done + " / " + r.ingredients.length + "</span></div><div class=\"ings\">" + r.ingredients.map((g, i) =>
+  h += '<div class="h3row"><h3 style="margin-top:8px">재료</h3><span>' + done + " / " + r.ingredients.length + '</span></div><div class="ings">' + r.ingredients.map((g, i) =>
     '<button class="ingrow' + (ck[i] ? " done" : "") + '" data-check="' + i + '"><span class="box"></span><span class="nm">' + esc(g.name) + "<small>" + esc(g.amount) + "</small></span>" + tag(g) + "</button>").join("") + "</div>";
-  h += "<h3>만드는 순서</h3><ol class=\"steps\">" + r.steps.map((s, i) => "<li><i>" + (i + 1) + "</i><span>" + esc(s) + "</span></li>").join("") + "</ol>";
+  h += '<h3>만드는 순서</h3><ol class="steps">' + r.steps.map((s, i) => "<li><i>" + (i + 1) + "</i><span>" + esc(s) + "</span></li>").join("") + "</ol>";
   if (r.tip) h += '<div class="tip"><b>한 줄 팁</b>' + esc(r.tip) + "</div>";
+  if (r.delivery) h += '<button class="btn ghost" data-copy="' + esc(r.delivery) + '" style="margin-bottom:14px">배달로 먹을래요 · 검색어 복사</button>';
   h += '<button class="btn ghost" data-back>목록으로</button>';
   $("detail-in").innerHTML = h;
 }
-function openRecipe(id) { openId = id; renderDetail(); show("detail"); $("detail").scrollTop = 0; }
-
-// ---------------- decide screen ----------------
-function renderDecide() {
-  const list = S.cands.map(byId).filter(Boolean);
-  let h = '<div class="bar"><button class="back" data-back>‹ 뒤로</button></div><h2>후보 중에 고르기</h2>';
-  if (!list.length) { $("decide-in").innerHTML = h + '<div class="empty">담아 둔 후보가 없어요.</div>'; return; }
-  h += '<p class="sub">시간과 사야 할 재료를 나란히 놓고 봐요.</p>';
-  h += list.map((r) => '<div class="cand' + (picked === r.id ? " pick" : "") + '">' + (picked === r.id ? '<p class="pickmsg">이 메뉴 어때요? 살 것이 가장 적고 빨리 돼요.</p>' : "") +
-    menuCard(r, { status: true, noHeart: true }) + '<div class="acts"><button class="btn" data-choose="' + r.id + '">이걸로 결정</button><button class="btn ghost" data-drop="' + r.id + '">빼기</button></div></div>').join("");
-  if (list.length > 1) h += '<button class="btn ghost" data-pick>못 고르겠어요 · 대신 골라 줘</button>';
-  $("decide-in").innerHTML = h;
-}
+function openRecipe(id) { openId = id; renderDetail(); $("detail").classList.add("show"); document.body.style.overflow = "hidden"; $("detail").scrollTop = 0; armBack(); }
+function closeDetail() { $("detail").classList.remove("show"); document.body.style.overflow = ""; openId = null; render(); }
+const isOpen = (id) => $(id).classList.contains("show");
 
 // ---------------- helpers ----------------
-const isOpen = (id) => $(id).classList.contains("show");
-function show(id) { $(id).classList.add("show"); document.body.style.overflow = "hidden"; armBack(); }
-function hide(id) { $(id).classList.remove("show"); if (!isOpen("detail") && !isOpen("decide")) document.body.style.overflow = ""; }
 let toastT = 0;
 function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2600); }
 function copy(text) {
@@ -295,51 +246,35 @@ function copy(text) {
   const old = () => { const a = document.createElement("textarea"); a.value = text; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); ok(); } catch (e) { toast("복사가 안 돼요. '" + text + "' 로 검색해 보세요."); } a.remove(); };
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, old); else old();
 }
-function closeTop() {
-  if (isOpen("detail")) { hide("detail"); openId = null; }
-  else if (isOpen("decide")) { hide("decide"); picked = null; }
-  render();
-}
 
 // ---------------- taps ----------------
 document.addEventListener("click", (e) => {
-  const t = e.target.closest("[data-fav],[data-cand],[data-open],[data-tab],[data-tag],[data-kind],[data-gotag],[data-gokind],[data-have],[data-clearhave],[data-shuffle],[data-decide],[data-back],[data-check],[data-copy],[data-choose],[data-drop],[data-pick]");
+  const t = e.target.closest("[data-fav],[data-open],[data-page],[data-home],[data-tag],[data-have],[data-clearhave],[data-back],[data-check],[data-copy]");
   if (!t) return;
   const d = t.dataset;
   if (d.fav) { S.favs = MENU.toggle(S.favs, d.fav); save(); return render(); }
-  if (d.cand) {
-    if (S.cands.includes(d.cand)) S.cands = S.cands.filter((x) => x !== d.cand);
-    else { const a = MENU.addCand(S.cands, d.cand); if (!a.ok) return toast("후보는 " + MENU.MAX_CANDS + "개까지예요. 하나를 빼고 담아 주세요."); S.cands = a.cands; }
-    save(); return render();
-  }
-  if (d.choose) { S.cands = []; picked = null; save(); hide("decide"); render(); return openRecipe(d.choose); }
-  if (d.drop) { S.cands = S.cands.filter((x) => x !== d.drop); if (picked === d.drop) picked = null; save(); if (!S.cands.length) hide("decide"); return render(); }
-  if ("pick" in d) { const p = MENU.pick(S.cands.map(byId).filter(Boolean), S.have, DATA.PANTRY); picked = p && p.id; renderDecide(); return $("decide").scrollTo({ top: 0 }); }
   if (d.open) return openRecipe(d.open);
-  if (d.tab) return go(d.tab);
+  if (d.page) return go(d.page);
+  if ("home" in d) return go("home");
   if (d.tag) { fTag = d.tag; return render(); }
-  if (d.kind) { fKind = d.kind; return render(); }
-  if (d.gotag) { fTag = d.gotag; fKind = "all"; return go("book"); }
-  if (d.gokind) { fKind = d.gokind; fTag = "all"; return go("book"); }
   if (d.have) { S.have = MENU.toggle(S.have, d.have); save(); return render(); }
   if ("clearhave" in d) { S.have = []; save(); return render(); }
-  if ("shuffle" in d) { shown = MENU.suggest(RECIPES, 3, Math.random, shown).map((r) => r.id); render(); return scrollTo(0, 0); }
-  if ("decide" in d) { picked = null; renderDecide(); show("decide"); return ($("decide").scrollTop = 0); }
-  if ("back" in d) return closeTop();
+  if ("back" in d) return closeDetail();
   if (d.check) { const ck = checks[openId] || (checks[openId] = {}); ck[d.check] = !ck[d.check]; return renderDetail(); }
   if (d.copy) return copy(d.copy);
 });
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.matches && e.target.matches(".menu")) e.target.click(); });
 
 // ---------------- Android back button ----------------
-// While a screen is open or another tab is showing, one extra history entry is kept, so "back" closes the top thing instead of the app.
+// While a recipe is open or a page other than home is showing, one extra history entry is kept,
+// so "back" closes the top thing instead of the app: recipe -> list -> home.
 let backArmed = false;
 function armBack() { if (!backArmed) { try { history.pushState({ menu: 1 }, ""); backArmed = true; } catch (e) {} } }
 addEventListener("popstate", () => {
   backArmed = false;
-  if (isOpen("detail") || isOpen("decide")) { closeTop(); if (isOpen("decide") || tab !== "today") armBack(); return; }
-  if (tab !== "today") { tab = "today"; render(); return scrollTo(0, 0); }
-  history.back(); // nothing open on the first tab: leave the app
+  if (isOpen("detail")) { closeDetail(); if (page !== "home") armBack(); return; }
+  if (page !== "home") { page = "home"; fTag = "all"; render(); return scrollTo(0, 0); }
+  history.back(); // nothing open on the home page: leave the app
 });
 
 render();
