@@ -177,6 +177,7 @@ function viewHome() {
   let h = "<h2>오늘 " + esc(nameOf(DATA.MEALS, now)) + ',<br>뭐 먹을까?</h2><p class="sub">칸을 누르면 어울리는 메뉴가 나와요.</p>';
   h += '<div class="tiles">' + DATA.MEALS.map((m, i) => tile(m, i >= 3)).join("") + "</div>";
   h += '<div class="two"><button class="btn ghost" data-page="favs">찜한 메뉴' + (S.favs.length ? " " + S.favs.length + "개" : "") + '</button><button class="btn ghost" data-page="pantry">우리 집 재료</button></div>';
+  if (installEvt) h += '<button class="btn" data-install style="margin-top:18px">홈 화면에 앱으로 설치하기</button>';
   return h + '<p class="foot">칼로리·단백질은 재료 양으로 어림한 추정치예요.</p>';
 }
 function viewMeal(id) {
@@ -249,7 +250,7 @@ function copy(text) {
 
 // ---------------- taps ----------------
 document.addEventListener("click", (e) => {
-  const t = e.target.closest("[data-fav],[data-open],[data-page],[data-home],[data-tag],[data-have],[data-clearhave],[data-back],[data-check],[data-copy]");
+  const t = e.target.closest("[data-fav],[data-open],[data-page],[data-home],[data-tag],[data-have],[data-clearhave],[data-back],[data-check],[data-copy],[data-install]");
   if (!t) return;
   const d = t.dataset;
   if (d.fav) { S.favs = MENU.toggle(S.favs, d.fav); save(); return render(); }
@@ -262,6 +263,7 @@ document.addEventListener("click", (e) => {
   if ("back" in d) return closeDetail();
   if (d.check) { const ck = checks[openId] || (checks[openId] = {}); ck[d.check] = !ck[d.check]; return renderDetail(); }
   if (d.copy) return copy(d.copy);
+  if ("install" in d && installEvt) { const ev = installEvt; installEvt = null; ev.prompt(); return render(); }
 });
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.matches && e.target.matches(".menu")) e.target.click(); });
 
@@ -276,6 +278,12 @@ addEventListener("popstate", () => {
   if (page !== "home") { page = "home"; fTag = "all"; render(); return scrollTo(0, 0); }
   history.back(); // nothing open on the home page: leave the app
 });
+
+// ---------------- install ----------------
+// Chrome decides on its own when to offer "install app"; when it says the app can be installed, the home page shows its own button too.
+let installEvt = null;
+addEventListener("beforeinstallprompt", (e) => { installEvt = e; if (page === "home") render(); });
+addEventListener("appinstalled", () => { installEvt = null; render(); toast("설치했어요. 홈 화면의 아이콘으로 열어 보세요."); });
 
 render();
 </script>
