@@ -104,4 +104,8 @@ test("저장: 되돌려 읽기, 없어진 요리·이상한 값은 버림", () =
 test("지금 끼니", () => {
   assert.deepStrictEqual([7, 12, 19].map(M.mealNow), ["breakfast", "lunch", "dinner"]);
 });
+test("사진 목록: 있는 요리의 것만, 파일도 실제로 있다", () => {
+  const PH = require(path.join(__dirname, "..", "photos.js")), fs = require("fs");
+  PH.forEach((id) => { assert(rec(id), "없는 요리의 사진: " + id); assert(fs.existsSync(path.join(__dirname, "..", "photos", id + ".jpg")), "사진 파일 없음: " + id); });
+});
 console.log("\n" + n + "개 시험 통과 · 요리 " + R.length + "개");

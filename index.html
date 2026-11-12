@@ -63,6 +63,8 @@ h3 { font-family: var(--title); font-weight: 400; font-size: 21px; margin: 26px 
 /* menu cards */
 .menu { display: flex; gap: 12px; align-items: center; background: var(--bg2); border: 2px solid var(--line); border-radius: 22px; padding: 10px; margin-bottom: 12px; position: relative; cursor: pointer; }
 .menu .pic { flex: none; width: 104px; background: var(--sky); border-radius: 15px; padding: 6px; }
+.menu .pic.ph, .hero.ph { padding: 0; overflow: hidden; }
+img.photo { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .menu .txt { min-width: 0; flex: 1; padding-right: 30px; }
 .menu .name { font-family: var(--title); font-size: 19px; line-height: 1.2; margin: 2px 0 4px; word-break: keep-all; }
 .meta { font-size: 13.5px; color: var(--soft); line-height: 1.4; }
@@ -137,6 +139,7 @@ h3 { font-family: var(--title); font-weight: 400; font-size: 21px; margin: 26px 
 <script src="recipes.js" charset="utf-8"></script>
 <script src="logic.js" charset="utf-8"></script>
 <script src="art.js" charset="utf-8"></script>
+<script src="photos.js" charset="utf-8"></script>
 <script>
 "use strict";
 // Three levels: home (five boxes) -> the dishes of one box -> one recipe.
@@ -154,6 +157,9 @@ let openId = null;
 const checks = {}; // ingredient ticks while cooking; kept only until the app is closed
 
 // ---------------- pieces ----------------
+// a real photo when photos/<id>.jpg exists (listed in photos.js), the drawing otherwise
+const hasPhoto = (r) => typeof PHOTOS !== "undefined" && PHOTOS.indexOf(r.id) >= 0;
+const pic = (r) => (hasPhoto(r) ? '<img class="photo" src="photos/' + r.id + '.jpg" alt="" loading="lazy" width="800" height="600">' : ART.dish(r.art));
 const meta = (r) => '<div class="meta"><span><b>' + r.time + '</b>분</span> · <span>약 <b>' + r.kcal + '</b>kcal</span> · <span>단백질 약 <b>' + r.protein + "</b>g</span></div>";
 const heartBtn = (r) => '<button class="heart' + (S.favs.includes(r.id) ? " on" : "") + '" data-fav="' + r.id + '" aria-label="찜">' + HEART + "</button>";
 // One line about what's at home; empty until the pantry has been filled in.
@@ -164,7 +170,7 @@ function status(r) {
   return '<span class="status need">살 것: ' + esc(s.need.map((g) => g.name).join(", ")) + "</span>";
 }
 function menuCard(r) {
-  return '<div class="menu" data-open="' + r.id + '" role="button" tabindex="0"><div class="pic">' + ART.dish(r.art) + '</div><div class="txt">' +
+  return '<div class="menu" data-open="' + r.id + '" role="button" tabindex="0"><div class="pic' + (hasPhoto(r) ? " ph" : "") + '">' + pic(r) + '</div><div class="txt">' +
     '<div class="eyebrow">' + esc(nameOf(DATA.KINDS, r.kind) + " · " + nameOf(DATA.INGREDIENTS, r.tags[0])) + '</div><div class="name">' + esc(r.name) + "</div>" + meta(r) + status(r) + "</div>" + heartBtn(r) + "</div>";
 }
 const BACKBAR = '<div class="pagebar"><button class="back" data-home>‹ 처음으로</button></div>';
@@ -223,7 +229,7 @@ function renderDetail() {
   const tag = (g) => !S.have.length ? "" : sp.have.includes(g) ? '<span class="tag">있음</span>' : sp.need.includes(g) ? '<span class="tag no">없음</span>' : sp.opt.includes(g) ? '<span class="tag opt">없어도 돼요</span>' : "";
   const done = r.ingredients.filter((_, i) => ck[i]).length;
   let h = '<div class="bar"><button class="back" data-back>‹ 뒤로</button>' + heartBtn(r) + "</div>";
-  h += '<div class="hero">' + ART.dish(r.art) + "</div>";
+  h += '<div class="hero' + (hasPhoto(r) ? " ph" : "") + '">' + pic(r) + "</div>";
   h += '<div class="eyebrow" style="margin-top:14px">' + esc(nameOf(DATA.KINDS, r.kind) + " · " + r.tags.map((t) => nameOf(DATA.INGREDIENTS, t)).join(" · ")) + '</div><h2 style="margin-top:2px">' + esc(r.name) + "</h2>";
   h += '<div class="stats"><div class="stat">조리 시간<b>' + r.time + '<small>분</small></b></div><div class="stat">칼로리<b><small>약 </small>' + r.kcal + '</b></div><div class="stat">단백질<b><small>약 </small>' + r.protein + "<small>g</small></b></div></div>";
   h += '<p class="note">1인분 기준이에요. 칼로리·단백질은 재료 양으로 어림한 추정치이고 공식 수치가 아니에요.</p>';
