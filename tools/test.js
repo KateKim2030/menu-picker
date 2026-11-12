@@ -15,7 +15,7 @@ test("모든 요리에 이름·재료·순서·시간·칼로리·그림·칸이
   assert.deepStrictEqual(errs, [], errs.join("\n"));
 });
 test("검사기가 빠진 내용을 잡아낸다", () => {
-  const bad = { id: "Bad Id", name: "", tags: ["nope"], kind: "x", meals: ["brunch"], time: 90, ingredients: [{ name: "두부" }], steps: [""], art: { dish: "cup" } };
+  const bad = { id: "Bad Id", name: "", tags: ["nope"], kind: "x", meals: ["brunch"], time: 200, ingredients: [{ name: "두부" }], steps: [""], art: { dish: "cup" } };
   const errs = M.validate(Object.assign({}, D, { RECIPES: [bad, R[0], R[0], Object.assign({}, R[1], { meals: [] })] }), ART.check);
   ["id 는", "이름 없음", "모르는 주재료", "모르는 종류", "모르는 칸", "meals 없음", "조리 시간", "칼로리", "단백질", "재료가 2개 미만", "순서가 2개 미만", "모르는 그릇", "id 겹침"]
     .forEach((w) => assert(errs.some((e) => e.includes(w)), "못 잡음: " + w));
@@ -61,7 +61,6 @@ test("재료 버튼은 그 칸에 실제로 있는 재료만", () => {
     tags.forEach((t) => assert(M.list(R, m.id, t.id).length >= 1, m.name + " " + t.name));
     D.INGREDIENTS.filter((t) => !tags.includes(t)).forEach((t) => assert.strictEqual(M.list(R, m.id, t.id).length, 0));
   });
-  assert(!M.tagsIn(M.list(R, "breakfast"), D.INGREDIENTS).some((t) => t.id === "seafood")); // no seafood breakfasts yet
   assert(M.tagsIn(M.list(R, "camping"), D.INGREDIENTS).some((t) => t.id === "seafood"));
 });
 test("찜: 켜고 끄기, 찜한 것이 위로", () => {

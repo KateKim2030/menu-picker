@@ -18,6 +18,9 @@ HAVE = ["egg", "cabbage", "tofu", "scallion", "rice", "onion", "napa"]
 D = 'openRecipe("millefeuille-nabe");'
 STATES = {
     "01_home": (st(favs=["egg-soup", "gambas"]), ""),
+    "01b_lunch": (st(), 'go("meal:lunch")'),
+    "01c_dinner": (st(), 'go("meal:dinner")'),
+    "01d_detail_new": (st(), 'openRecipe("jjajangmyeon")'),
     "02_breakfast": (st(), 'go("meal:breakfast")'),
     "03_dinner_tofu": (st(have=HAVE, favs=["soft-tofu-stew"]), 'go("meal:dinner");fTag="tofu";render()'),
     "04_healthy": (st(), 'go("meal:healthy")'),

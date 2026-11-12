@@ -21,7 +21,7 @@
       if (kindIds.indexOf(r.kind) < 0) bad("모르는 종류 " + r.kind);
       if (!Array.isArray(r.meals) || !r.meals.length) bad("meals 없음 (홈 화면 어느 칸에도 안 나옴)");
       else r.meals.forEach((m) => { if (mealIds.indexOf(m) < 0) bad("모르는 칸 " + m); });
-      if (!(r.time >= 1 && r.time <= 30)) bad("조리 시간은 1~30분");
+      if (!(r.time >= 1 && r.time <= 90)) bad("조리 시간은 1~90분");
       if (!(r.kcal > 0)) bad("칼로리 없음");
       if (!(r.protein > 0)) bad("단백질 없음");
       if (!Array.isArray(r.ingredients) || r.ingredients.length < 2) bad("재료가 2개 미만");
